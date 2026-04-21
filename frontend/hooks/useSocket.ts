@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import type { Socket } from "socket.io-client";
+import { useEffect, useState } from 'react';
+import type { Socket } from 'socket.io-client';
 
-import { connect, disconnect, getSocket } from "@/lib/socket";
+import { connect, disconnect, getSocket } from '@/lib/socket';
 
 interface UseSocketResult {
   socket: Socket | null;
@@ -13,7 +13,7 @@ interface UseSocketResult {
 
 export function useSocket(token?: string): UseSocketResult {
   const [socket] = useState<Socket | null>(() => {
-    if (typeof window === "undefined") {
+    if (typeof window === 'undefined') {
       return null;
     }
 
@@ -37,18 +37,17 @@ export function useSocket(token?: string): UseSocketResult {
     };
 
     const onError = (error: Error) => {
-      setConnectionError(error.message || "Không thể kết nối tới máy chủ.");
+      setConnectionError(error.message || 'Không thể kết nối tới máy chủ.');
     };
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("connect_error", onError);
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+    socket.on('connect_error', onError);
 
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("connect_error", onError);
-      disconnect();
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+      socket.off('connect_error', onError);
     };
   }, [socket]);
 

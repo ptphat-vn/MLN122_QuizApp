@@ -5,17 +5,20 @@ interface WaitingRoomPlayerProps {
 export function WaitingRoomPlayer({ nickname }: WaitingRoomPlayerProps) {
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
-      <section className="glass-card w-full max-w-lg p-8 text-center">
-        <p className="text-3xl font-extrabold">Bạn đã vào phòng!</p>
-        <p className="mt-2 text-white/85">Tên hiển thị: {nickname}</p>
-
-        <div className="mx-auto mt-6 flex w-fit gap-2">
-          <span className="size-3 animate-bounce rounded-full bg-white" />
-          <span className="size-3 animate-bounce rounded-full bg-white [animation-delay:0.1s]" />
-          <span className="size-3 animate-bounce rounded-full bg-white [animation-delay:0.2s]" />
+      <section className="mln-frame w-full max-w-md p-8 text-center animate-fade-in">
+        <div className="mb-6 flex justify-center gap-1.5">
+          <span className="size-2 animate-bounce rounded-full bg-mln-red" style={{ animationDelay: '0ms' }} />
+          <span className="size-2 animate-bounce rounded-full bg-mln-gold" style={{ animationDelay: '150ms' }} />
+          <span className="size-2 animate-bounce rounded-full bg-mln-red" style={{ animationDelay: '300ms' }} />
         </div>
-
-        <p className="mt-4 text-white/80">Đang chờ host bắt đầu...</p>
+        <div className="mx-auto mt-5 w-fit rounded-2xl bg-linear-to-br from-mln-red to-mln-red-dark px-8 py-3.5 text-center shadow-lg shadow-mln-red/25">
+          <p className="text-xs font-medium uppercase tracking-widest text-white/70">Thí sinh</p>
+          <p className="mt-0.5 text-2xl font-bold text-white">{nickname}</p>
+        </div>
+        <p className="mt-5 text-sm text-mln-dim">Đang chờ giám thị khai mạc kỳ thi...</p>
+        <blockquote className="mt-6 rounded-xl border border-mln-gold/20 bg-mln-gold/5 p-4 text-left text-xs italic text-mln-dim">
+          &ldquo;Học, học nữa, học mãi.&rdquo; &mdash; V.I. Lê-nin
+        </blockquote>
       </section>
     </main>
   );

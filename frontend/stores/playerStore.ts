@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { create } from "zustand";
+import { create } from 'zustand';
 
-import { AnswerResult } from "@/types";
+import { AnswerResult } from '@/types';
 
 interface PlayerStore {
   pin: string;
@@ -21,8 +21,8 @@ interface PlayerStore {
 }
 
 const initialState = {
-  pin: "",
-  nickname: "",
+  pin: '',
+  nickname: '',
   score: 0,
   rank: 0,
   streak: 0,
@@ -39,6 +39,7 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
     set({
       lastAnswerResult,
       streak: lastAnswerResult.streak,
+      score: lastAnswerResult.totalScore,
     }),
   setHasAnswered: (hasAnswered) => set({ hasAnswered }),
   reset: () => set(initialState),

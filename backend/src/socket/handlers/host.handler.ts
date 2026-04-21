@@ -18,15 +18,19 @@ import {
   QuestionEvent,
   AnswerEvent,
   LeaderboardEvent,
-  DashboardEvent,
 } from '../events';
 
 // Bộ nhớ đệm trạng thái phiên chơi
 const sessionStore: Map<string, SessionState> = new Map();
 
+// Thời gian tự động chuyển trạng thái (ms)
+const REVEAL_DELAY = 1000; // time_up → hiển thị đáp án sau 1s
+const LEADERBOARD_DELAY = 4000; // đáp án → bảng xếp hạng sau 4s
+const NEXT_QUESTION_DELAY = 4000; // bảng xếp hạng → câu tiếp sau 4s
+const FIRST_QUESTION_DELAY = 3000; // game:started → câu đầu tiên sau 3s
+
 /**
- * Tính điểm theo thuật toán Kahoot:
- * điểm = basePoints × timeFactor × streakBonus
+ * Tính điểm theo thuật toán Kahoot
  */
 const calculateScore = (
   basePoints: number,
@@ -37,27 +41,6 @@ const calculateScore = (
   const timeFactor = (timeLimit - responseTimeMs / 1000) / timeLimit;
   const streakBonus = streak >= 3 ? 1.2 : 1.0;
   return Math.round(basePoints * Math.max(0, timeFactor) * streakBonus);
-};
-
-/**
- * Bắt đầu đếm ngược phía server và phát sự kiện time_tick mỗi giây.
- * Tự động phát time_up khi hết giờ.
- */
-const startTimer = (io: Server, state: SessionState): void => {
-  // Dọn timer cũ nếu có
-  if (state.timer) clearInterval(state.timer);
-
-  let timeLeft = state.currentTimeLimit;
-  state.timer = setInterval(async () => {
-    timeLeft--;
-    io.to(`game:${state.pin}`).emit(QuestionEvent.TIME_TICK, { timeLeft });
-
-    if (timeLeft <= 0) {
-      clearInterval(state.timer as ReturnType<typeof setInterval>);
-      state.timer = undefined;
-      io.to(`game:${state.pin}`).emit(QuestionEvent.TIME_UP, {});
-    }
-  }, 1000);
 };
 
 /**
@@ -72,6 +55,234 @@ const buildRankings = (players: Map<string, Player>): RankingEntry[] => {
       score: p.score,
     }));
 };
+
+/**
+ * Xoá auto timer nếu còn đang chạy
+ */
+const clearAutoTimer = (state: SessionState): void => {
+  if (state.autoTimer) {
+    clearTimeout(state.autoTimer);
+    state.autoTimer = undefined;
+  }
+};
+
+// ─── Standalone auto-advance functions ───────────────────────────────────────
+
+/**
+ * Hiển thị đáp án đúng + thống kê, rồi lên lịch show leaderboard.
+ */
+const doRevealAnswer = async (io: Server, sessionId: string): Promise<void> => {
+  const state = sessionStore.get(sessionId);
+  if (!state) return;
+
+  if (state.timer) {
+    clearInterval(state.timer);
+    state.timer = undefined;
+  }
+  clearAutoTimer(state);
+
+  state.status = 'answer_reveal';
+  await Session.findByIdAndUpdate(sessionId, { status: 'answer_reveal' });
+
+  const session = await Session.findById(sessionId);
+  if (!session) return;
+
+  const questions = await Question.find({ quizId: session.quizId }).sort(
+    'order',
+  );
+  const question = questions[state.currentQuestionIndex];
+  if (!question) return;
+
+  const correctOptions = question.options
+    .filter((o) => o.isCorrect)
+    .map((o) => o.id);
+
+  const answers = await PlayerAnswer.find({
+    sessionId,
+    questionId: question._id,
+  });
+  const totalAnswered = answers.length;
+  const optionCounts: Record<string, number> = {};
+  question.options.forEach((o) => (optionCounts[o.id] = 0));
+  answers.forEach((a) => a.selectedOptions.forEach((id) => optionCounts[id]++));
+
+  const stats: OptionStat[] = question.options.map((o) => ({
+    optionId: o.id,
+    text: o.text,
+    count: optionCounts[o.id] || 0,
+    percentage:
+      totalAnswered > 0
+        ? Math.round(((optionCounts[o.id] || 0) / totalAnswered) * 100)
+        : 0,
+    color: o.color,
+    isCorrect: o.isCorrect,
+  }));
+
+  io.to(`game:${state.pin}`).emit(AnswerEvent.REVEAL, {
+    correctOptions,
+    stats,
+  });
+
+  state.autoTimer = setTimeout(() => {
+    void doShowLeaderboard(io, sessionId);
+  }, LEADERBOARD_DELAY);
+};
+
+/**
+ * Hiển thị bảng xếp hạng, rồi lên lịch chuyển câu tiếp hoặc kết thúc.
+ */
+const doShowLeaderboard = async (
+  io: Server,
+  sessionId: string,
+): Promise<void> => {
+  const state = sessionStore.get(sessionId);
+  if (!state) return;
+
+  clearAutoTimer(state);
+
+  state.status = 'leaderboard';
+  await Session.findByIdAndUpdate(sessionId, { status: 'leaderboard' });
+
+  const rankings: RankingEntry[] = buildRankings(state.players).map((r) => ({
+    ...r,
+    delta: 0,
+  }));
+
+  io.to(`game:${state.pin}`).emit(LeaderboardEvent.SHOW, { rankings });
+
+  const session = await Session.findById(sessionId);
+  if (!session) return;
+  const questions = await Question.find({ quizId: session.quizId }).sort(
+    'order',
+  );
+  const hasMore = state.currentQuestionIndex + 1 < questions.length;
+
+  state.autoTimer = setTimeout(() => {
+    if (hasMore) {
+      void doNextQuestion(io, sessionId);
+    } else {
+      void doEndGame(io, sessionId);
+    }
+  }, NEXT_QUESTION_DELAY);
+};
+
+/**
+ * Chuyển sang câu hỏi tiếp theo và bắt đầu timer mới.
+ */
+const doNextQuestion = async (io: Server, sessionId: string): Promise<void> => {
+  const state = sessionStore.get(sessionId);
+  if (!state) return;
+
+  clearAutoTimer(state);
+
+  state.currentQuestionIndex++;
+  state.answeredCount = 0;
+  state.status = 'question';
+
+  await Session.findByIdAndUpdate(sessionId, {
+    status: 'question',
+    currentQuestionIndex: state.currentQuestionIndex,
+  });
+
+  const session = await Session.findById(sessionId);
+  if (!session) return;
+
+  const questions = await Question.find({ quizId: session.quizId }).sort(
+    'order',
+  );
+  const question = questions[state.currentQuestionIndex];
+  if (!question) return;
+
+  state.currentTimeLimit = question.timeLimit;
+  state.questionStartTime = Date.now();
+
+  io.to(`game:${state.pin}`).emit(QuestionEvent.SHOW, {
+    _id: question._id.toString(),
+    index: state.currentQuestionIndex,
+    total: questions.length,
+    content: question.content,
+    type: question.type,
+    options: question.options.map((o) => ({
+      id: o.id,
+      text: o.text,
+      color: o.color,
+    })),
+    timeLimit: question.timeLimit,
+    points: question.points,
+    imageUrl: question.imageUrl,
+  });
+
+  startTimer(io, state, sessionId);
+};
+
+/**
+ * Kết thúc game, lưu DB, phát sự kiện kết thúc.
+ */
+const doEndGame = async (io: Server, sessionId: string): Promise<void> => {
+  const state = sessionStore.get(sessionId);
+  if (!state) return;
+
+  if (state.timer) {
+    clearInterval(state.timer);
+    state.timer = undefined;
+  }
+  clearAutoTimer(state);
+
+  state.status = 'ended';
+
+  const finalPlayers = [...state.players.values()].map((p) => ({
+    socketId: p.socketId,
+    nickname: p.nickname,
+    score: p.score,
+    streak: p.streak,
+    joinedAt: p.joinedAt,
+  }));
+
+  await Session.findByIdAndUpdate(sessionId, {
+    status: 'ended',
+    players: finalPlayers,
+    endedAt: new Date(),
+  });
+
+  const finalRankings = buildRankings(state.players).map((r) => ({
+    rank: r.rank,
+    nickname: r.nickname,
+    score: r.score,
+  }));
+
+  io.to(`game:${state.pin}`).emit(GameEvent.ENDED, { finalRankings });
+
+  sessionStore.delete(sessionId);
+};
+
+/**
+ * Bắt đầu đếm ngược phía server — tự động reveal khi hết giờ.
+ */
+const startTimer = (
+  io: Server,
+  state: SessionState,
+  sessionId: string,
+): void => {
+  if (state.timer) clearInterval(state.timer);
+
+  let timeLeft = state.currentTimeLimit;
+  state.timer = setInterval(() => {
+    timeLeft--;
+    io.to(`game:${state.pin}`).emit(QuestionEvent.TIME_TICK, { timeLeft });
+
+    if (timeLeft <= 0) {
+      clearInterval(state.timer as ReturnType<typeof setInterval>);
+      state.timer = undefined;
+      io.to(`game:${state.pin}`).emit(QuestionEvent.TIME_UP, {});
+
+      state.autoTimer = setTimeout(() => {
+        void doRevealAnswer(io, sessionId);
+      }, REVEAL_DELAY);
+    }
+  }, 1000);
+};
+
+// ─── Socket event handlers ────────────────────────────────────────────────────
 
 export const registerHostHandlers = (io: Server, socket: Socket): void => {
   // Host xác thực và tham gia phòng
@@ -93,8 +304,10 @@ export const registerHostHandlers = (io: Server, socket: Socket): void => {
         await socket.join(`host:${data.sessionId}`);
         await socket.join(`game:${session.pin}`);
 
-        // Khởi tạo trạng thái phiên nếu chưa có
         if (!sessionStore.has(data.sessionId)) {
+          const questions = await Question.find({
+            quizId: session.quizId,
+          }).sort('order');
           sessionStore.set(data.sessionId, {
             sessionId: data.sessionId,
             pin: session.pin,
@@ -106,6 +319,7 @@ export const registerHostHandlers = (io: Server, socket: Socket): void => {
             answeredCount: 0,
             questionStartTime: 0,
             currentTimeLimit: 0,
+            totalQuestions: questions.length,
           });
         } else {
           const state = sessionStore.get(data.sessionId)!;
@@ -119,7 +333,7 @@ export const registerHostHandlers = (io: Server, socket: Socket): void => {
     },
   );
 
-  // Host kick người chơi ra khỏi phòng
+  // Host kick người chơi
   socket.on(
     HostEvent.KICK_PLAYER,
     async (data: { sessionId: string; socketId: string }): Promise<void> => {
@@ -140,7 +354,7 @@ export const registerHostHandlers = (io: Server, socket: Socket): void => {
     },
   );
 
-  // Host bắt đầu game
+  // Host bắt đầu game → tự động chạy câu đầu tiên sau FIRST_QUESTION_DELAY
   socket.on(
     HostEvent.START_GAME,
     async (data: { sessionId: string }): Promise<void> => {
@@ -154,195 +368,20 @@ export const registerHostHandlers = (io: Server, socket: Socket): void => {
       });
 
       io.to(`game:${state.pin}`).emit(GameEvent.STARTED, {});
+
+      state.autoTimer = setTimeout(() => {
+        void doNextQuestion(io, data.sessionId);
+      }, FIRST_QUESTION_DELAY);
     },
   );
 
-  // Host chuyển sang câu hỏi tiếp theo
-  socket.on(
-    HostEvent.NEXT_QUESTION,
-    async (data: { sessionId: string }): Promise<void> => {
-      const state = sessionStore.get(data.sessionId);
-      if (!state || state.hostSocketId !== socket.id) return;
-
-      state.currentQuestionIndex++;
-      state.answeredCount = 0;
-      state.status = 'question';
-
-      await Session.findByIdAndUpdate(data.sessionId, {
-        status: 'question',
-        currentQuestionIndex: state.currentQuestionIndex,
-      });
-
-      // Lấy danh sách câu hỏi của quiz
-      const session = await Session.findById(data.sessionId);
-      if (!session) return;
-
-      const questions = await Question.find({ quizId: session.quizId }).sort(
-        'order',
-      );
-      const question = questions[state.currentQuestionIndex];
-
-      if (!question) {
-        socket.emit(RoomEvent.ERROR, { message: 'Không còn câu hỏi nào.' });
-        return;
-      }
-
-      state.currentTimeLimit = question.timeLimit;
-      state.questionStartTime = Date.now();
-
-      // Gửi câu hỏi tới người chơi — KHÔNG bao gồm isCorrect
-      io.to(`game:${state.pin}`).emit(QuestionEvent.SHOW, {
-        index: state.currentQuestionIndex,
-        total: questions.length,
-        content: question.content,
-        type: question.type,
-        options: question.options.map((o) => ({
-          id: o.id,
-          text: o.text,
-          color: o.color,
-        })),
-        timeLimit: question.timeLimit,
-        points: question.points,
-        imageUrl: question.imageUrl,
-      });
-
-      startTimer(io, state);
-    },
-  );
-
-  // Host hiển thị đáp án
-  socket.on(
-    HostEvent.REVEAL_ANSWER,
-    async (data: { sessionId: string }): Promise<void> => {
-      const state = sessionStore.get(data.sessionId);
-      if (!state || state.hostSocketId !== socket.id) return;
-
-      // Dừng timer
-      if (state.timer) {
-        clearInterval(state.timer);
-        state.timer = undefined;
-      }
-
-      state.status = 'answer_reveal';
-      await Session.findByIdAndUpdate(data.sessionId, {
-        status: 'answer_reveal',
-      });
-
-      const session = await Session.findById(data.sessionId);
-      if (!session) return;
-
-      const questions = await Question.find({ quizId: session.quizId }).sort(
-        'order',
-      );
-      const question = questions[state.currentQuestionIndex];
-      if (!question) return;
-
-      const correctOptions = question.options
-        .filter((o) => o.isCorrect)
-        .map((o) => o.id);
-
-      // Thống kê số người chọn từng đáp án
-      const answers = await PlayerAnswer.find({
-        sessionId: data.sessionId,
-        questionId: question._id,
-      });
-
-      const totalAnswered = answers.length;
-      const optionCounts: Record<string, number> = {};
-      question.options.forEach((o) => (optionCounts[o.id] = 0));
-      answers.forEach((a) =>
-        a.selectedOptions.forEach((id) => optionCounts[id]++),
-      );
-
-      const stats: OptionStat[] = question.options.map((o) => ({
-        optionId: o.id,
-        text: o.text,
-        count: optionCounts[o.id] || 0,
-        percentage:
-          totalAnswered > 0
-            ? Math.round(((optionCounts[o.id] || 0) / totalAnswered) * 100)
-            : 0,
-        color: o.color,
-      }));
-
-      io.to(`game:${state.pin}`).emit(AnswerEvent.REVEAL, {
-        correctOptions,
-        stats,
-      });
-    },
-  );
-
-  // Host hiển thị bảng xếp hạng
-  socket.on(
-    HostEvent.SHOW_LEADERBOARD,
-    async (data: { sessionId: string }): Promise<void> => {
-      const state = sessionStore.get(data.sessionId);
-      if (!state || state.hostSocketId !== socket.id) return;
-
-      state.status = 'leaderboard';
-      await Session.findByIdAndUpdate(data.sessionId, {
-        status: 'leaderboard',
-      });
-
-      // Lấy điểm trước để tính delta
-      const prevScores: Record<string, number> = {};
-      const dbSession = await Session.findById(data.sessionId);
-      if (dbSession) {
-        dbSession.players.forEach((p) => {
-          prevScores[p.socketId] = p.score;
-        });
-      }
-
-      const rankings: RankingEntry[] = buildRankings(state.players).map(
-        (r) => ({
-          ...r,
-          delta: 0, // delta sẽ được tính từ câu hỏi hiện tại
-        }),
-      );
-
-      io.to(`game:${state.pin}`).emit(LeaderboardEvent.SHOW, { rankings });
-    },
-  );
-
-  // Host kết thúc game
+  // Host kết thúc game thủ công (nút khẩn cấp)
   socket.on(
     HostEvent.END_GAME,
     async (data: { sessionId: string }): Promise<void> => {
       const state = sessionStore.get(data.sessionId);
       if (!state || state.hostSocketId !== socket.id) return;
-
-      if (state.timer) {
-        clearInterval(state.timer);
-        state.timer = undefined;
-      }
-
-      state.status = 'ended';
-
-      // Lưu trạng thái cuối cùng vào MongoDB
-      const finalPlayers = [...state.players.values()].map((p) => ({
-        socketId: p.socketId,
-        nickname: p.nickname,
-        score: p.score,
-        streak: p.streak,
-        joinedAt: p.joinedAt,
-      }));
-
-      await Session.findByIdAndUpdate(data.sessionId, {
-        status: 'ended',
-        players: finalPlayers,
-        endedAt: new Date(),
-      });
-
-      const finalRankings = buildRankings(state.players).map((r) => ({
-        rank: r.rank,
-        nickname: r.nickname,
-        score: r.score,
-      }));
-
-      io.to(`game:${state.pin}`).emit(GameEvent.ENDED, { finalRankings });
-
-      // Dọn dẹp bộ nhớ đệm
-      sessionStore.delete(data.sessionId);
+      await doEndGame(io, data.sessionId);
     },
   );
 };

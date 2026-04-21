@@ -1,69 +1,83 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
-import { api } from "@/lib/api";
+import { useQuizStore } from '@/stores/quizStore';
 
 export default function CreateQuizPage() {
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [saving, setSaving] = useState(false);
+  const { createQuiz, saving } = useQuizStore();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleCreate = async () => {
     if (title.trim().length < 3) {
-      toast.error("Tiêu đề quiz cần ít nhất 3 ký tự.");
+      toast.error('Tiêu đề quiz cần ít nhất 3 ký tự.');
       return;
     }
 
     try {
-      setSaving(true);
-      const response = await api.post<{ _id: string }>("/quizzes", {
-        title,
-        description,
-      });
-      toast.success("Đã tạo quiz mới");
-      router.push(`/quiz/${response.data._id}/chinh-sua`);
+      const quiz = await createQuiz(
+        title.trim(),
+        description.trim() || undefined,
+      );
+      toast.success('Đã tạo quiz mới');
+      router.push(`/quiz/${quiz._id}/chinh-sua`);
     } catch {
-      toast.error("Không thể tạo quiz, vui lòng thử lại.");
-    } finally {
-      setSaving(false);
+      toast.error('Không thể tạo quiz, vui lòng thử lại.');
     }
   };
 
   return (
-    <main className="mx-auto mt-6 w-[min(900px,calc(100%-2rem))]">
-      <section className="glass-card p-6">
-        <h1 className="text-2xl font-extrabold">Tạo Quiz Mới</h1>
-        <p className="mt-1 text-white/80">Bước đầu để tạo phòng chơi: nhập tiêu đề và mô tả quiz.</p>
+    <main className="mx-auto mt-8 w-[min(720px,calc(100%-2rem))]">
+      {/* Back */}
+      <Link
+        href="/dashboard"
+        className="mb-5 inline-flex items-center gap-1.5 text-sm text-mln-dim transition hover:text-mln-cream"
+      >
+        ← Quay lại Dashboard
+      </Link>
 
-        <div className="mt-5 space-y-4">
+      <div className="glass-card p-7">
+        <h1 className="text-2xl font-bold text-mln-cream">Tạo bộ đề mới</h1>
+        <p className="mt-1 text-sm text-mln-dim">
+          Nhập tiêu đề và mô tả, sau đó biên soạn câu hỏi.
+        </p>
+
+        <div className="mt-6 space-y-5">
           <div>
-            <label htmlFor="title" className="mb-1 block text-sm font-semibold">
-              Tiêu đề quiz
+            <label
+              htmlFor="title"
+              className="mb-1.5 block text-sm font-medium text-mln-dim"
+            >
+              Tiêu đề bộ đề
             </label>
             <input
               id="title"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              className="w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-[var(--accent)]"
-              placeholder="Ví dụ: Ôn tập Sinh học lớp 12"
+              className="w-full rounded-xl border border-white/10 bg-white/6 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:ring-2 focus:ring-mln-red/10"
+              placeholder="Ví dụ: Ôn Tập Kinh Tế Chính Trị Chương 2"
             />
           </div>
 
           <div>
-            <label htmlFor="description" className="mb-1 block text-sm font-semibold">
-              Mô tả
+            <label
+              htmlFor="description"
+              className="mb-1.5 block text-sm font-medium text-mln-dim"
+            >
+              Mô tả <span className="text-mln-surface">(tùy chọn)</span>
             </label>
             <textarea
               id="description"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               rows={4}
-              className="w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 outline-none focus:ring-2 focus:ring-[var(--accent)]"
-              placeholder="Mục tiêu bài kiểm tra..."
+              className="w-full resize-none rounded-xl border border-white/10 bg-white/6 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:ring-2 focus:ring-mln-red/10"
+              placeholder="Mục tiêu kiểm tra, phạm vi kiến thức..."
             />
           </div>
 
@@ -71,12 +85,12 @@ export default function CreateQuizPage() {
             type="button"
             onClick={handleCreate}
             disabled={saving}
-            className="rounded-lg bg-[var(--accent)] px-4 py-2 font-semibold hover:brightness-110 disabled:opacity-60"
+            className="rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-7 py-3 font-semibold text-white shadow-lg shadow-mln-red/20 transition hover:brightness-110 disabled:opacity-60"
           >
-            {saving ? "Đang lưu..." : "Tạo quiz"}
+            {saving ? 'Đang lưu...' : '★ Tạo bộ đề'}
           </button>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

@@ -31,12 +31,7 @@ export const quizService = {
     const query = { hostId: new Types.ObjectId(hostId), isDeleted: false };
 
     const [quizzes, total] = await Promise.all([
-      Quiz.find(query)
-        .select('-questions')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
+      Quiz.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       Quiz.countDocuments(query),
     ]);
 

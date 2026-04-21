@@ -2,7 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { Session } from '../../models/Session.model';
 import { Question } from '../../models/Question.model';
 import { PlayerAnswer } from '../../models/PlayerAnswer.model';
-import { Player, SubmitAnswerPayload, OptionStat } from '../../types';
+import { Player, OptionStat } from '../../types';
 import { PlayerEvent, RoomEvent, AnswerEvent, DashboardEvent } from '../events';
 import { sessionStore } from './host.handler';
 
@@ -49,6 +49,9 @@ export const registerPlayerHandlers = (io: Server, socket: Socket): void => {
         return;
       }
 
+      // Lưu sessionId vào socket để dùng khi nộp bài
+      socket.data.sessionId = sessionId;
+
       // Kiểm tra nickname trùng
       const nicknameExists = [...state.players.values()].some(
         (p) => p.nickname.toLowerCase() === data.nickname.toLowerCase(),
@@ -82,8 +85,15 @@ export const registerPlayerHandlers = (io: Server, socket: Socket): void => {
   // Người chơi nộp câu trả lời
   socket.on(
     PlayerEvent.SUBMIT_ANSWER,
-    async (data: SubmitAnswerPayload): Promise<void> => {
-      const state = sessionStore.get(data.sessionId);
+    async (data: {
+      questionId: string;
+      selectedOptions: string[];
+      responseTime: number;
+    }): Promise<void> => {
+      const sessionId = socket.data.sessionId as string | undefined;
+      if (!sessionId) return;
+
+      const state = sessionStore.get(sessionId);
       if (!state) return;
 
       const player = state.players.get(socket.id);
@@ -120,7 +130,7 @@ export const registerPlayerHandlers = (io: Server, socket: Socket): void => {
 
       // Lưu câu trả lời vào DB
       await PlayerAnswer.create({
-        sessionId: data.sessionId,
+        sessionId,
         questionId: data.questionId,
         playerSocketId: socket.id,
         nickname: player.nickname,
@@ -137,12 +147,13 @@ export const registerPlayerHandlers = (io: Server, socket: Socket): void => {
         pointsEarned,
         isCorrect,
         streak: player.streak,
+        totalScore: player.score,
       });
 
       // Cập nhật dashboard cho host theo thời gian thực
       const totalPlayers = state.players.size;
       const answers = await PlayerAnswer.find({
-        sessionId: data.sessionId,
+        sessionId,
         questionId: data.questionId,
       });
 
@@ -161,14 +172,20 @@ export const registerPlayerHandlers = (io: Server, socket: Socket): void => {
             ? Math.round(((optionCounts[o.id] || 0) / answers.length) * 100)
             : 0,
         color: o.color,
+        isCorrect: o.isCorrect,
       }));
 
-      // Gửi update dashboard chỉ tới host socket
+      // Gửi update dashboard tới host (với stats chi tiết) và toàn phòng (chỉ số đếm)
       io.to(state.hostSocketId).emit(DashboardEvent.UPDATE, {
         questionId: data.questionId,
         totalAnswered: state.answeredCount,
         totalPlayers,
         optionStats,
+      });
+      // Broadcast số người đã trả lời tới tất cả người chơi
+      io.to(`game:${state.pin}`).emit('room:answered_update', {
+        totalAnswered: state.answeredCount,
+        totalPlayers,
       });
     },
   );

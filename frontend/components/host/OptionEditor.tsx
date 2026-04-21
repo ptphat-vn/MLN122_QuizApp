@@ -1,25 +1,44 @@
-import { Option } from "@/types";
+import { Option } from '@/types';
 
 interface OptionEditorProps {
   option: Option;
   label: string;
   checked: boolean;
   onToggle: () => void;
+  onTextChange?: (text: string) => void;
 }
 
-export function OptionEditor({ option, label, checked, onToggle }: OptionEditorProps) {
+export function OptionEditor({
+  option,
+  label,
+  checked,
+  onToggle,
+  onTextChange,
+}: OptionEditorProps) {
   return (
     <label
-      className="flex items-center gap-3 rounded-lg border border-white/25 bg-white/10 p-3"
-      style={{ borderLeftWidth: "6px", borderLeftColor: option.color }}
+      className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-white/4 p-3 transition hover:bg-white/7"
+      style={{ borderLeftWidth: '3px', borderLeftColor: option.color }}
     >
-      <span className="w-5 shrink-0 text-center font-bold">{label}</span>
+      <span
+        className="flex size-6 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white"
+        style={{ backgroundColor: option.color }}
+      >
+        {label}
+      </span>
       <input
         value={option.text}
-        readOnly
-        className="w-full bg-transparent text-sm text-white/90 outline-none"
+        onChange={(e) => onTextChange?.(e.target.value)}
+        readOnly={!onTextChange}
+        placeholder="Nhập đáp án..."
+        className="flex-1 bg-transparent text-sm text-mln-cream outline-none placeholder:text-mln-dim/50"
       />
-      <input type="checkbox" checked={checked} onChange={onToggle} />
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onToggle}
+        className="size-4 accent-mln-red"
+      />
     </label>
   );
 }
