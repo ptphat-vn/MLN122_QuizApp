@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { CalendarDays, FileQuestion } from 'lucide-react';
+import { FileQuestion } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useSessionStore } from '@/stores/sessionStore';
@@ -34,32 +34,32 @@ export function QuizCard({ quiz, onDelete }: QuizCardProps) {
   };
 
   return (
-    <article className="glass-card flex h-full flex-col overflow-hidden transition hover:border-mln-red/20 hover:bg-white/6">
-      {/* Coloured top accent */}
-      <div className="h-1 w-full bg-linear-to-r from-mln-red to-mln-gold" />
+    <article className="group relative overflow-hidden rounded-2xl border border-white/8 bg-black/35 transition hover:border-mln-red/30 hover:bg-black/50 hover:shadow-[0_0_30px_rgba(239,68,68,0.08)] flex h-full flex-col">
+      {/* Top gradient accent */}
+      <div className="h-1 w-full bg-linear-to-r from-mln-red via-mln-gold to-mln-red" />
 
       <div className="flex flex-1 flex-col p-5">
-        <span className="mb-2 inline-block self-start rounded-full bg-mln-red/15 px-2.5 py-0.5 text-xs font-semibold text-mln-red">
-          Kinh tế chính trị
-        </span>
-        <h3 className="line-clamp-2 text-base font-semibold text-mln-cream">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="mln-ink-badge">Kinh tế chính trị</span>
+          <span className="text-xs text-mln-surface font-mono">
+            {new Date(quiz.createdAt).toLocaleDateString('vi-VN')}
+          </span>
+        </div>
+        <h3 className="line-clamp-2 text-base font-bold uppercase tracking-wide text-mln-cream">
           {quiz.title}
         </h3>
-        <div className="mt-2 space-y-1 text-sm text-mln-dim">
-          <p className="inline-flex items-center gap-2">
-            <FileQuestion className="size-4" />
-            {quiz.questions?.length ?? 0} câu hỏi
-          </p>
-          <p className="inline-flex items-center gap-2">
-            <CalendarDays className="size-4" />
-            {new Date(quiz.createdAt).toLocaleDateString('vi-VN')}
-          </p>
+        <div className="mt-3 flex items-center gap-1.5 text-sm text-mln-dim">
+          <FileQuestion className="size-3.5 text-mln-gold/70" />
+          <span className="font-semibold text-mln-cream/80">
+            {quiz.questions?.length ?? 0}
+          </span>
+          <span>câu hỏi</span>
         </div>
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-auto pt-4 flex gap-2">
           <Link
             href={`/quiz/${quiz._id}/chinh-sua`}
-            className="flex-1 rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-center text-sm font-medium text-mln-dim transition hover:bg-white/10 hover:text-mln-cream"
+            className="flex-1 rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-center text-xs font-bold uppercase tracking-wide text-mln-dim transition hover:bg-white/10 hover:text-mln-cream"
           >
             Chỉnh sửa
           </Link>
@@ -67,14 +67,14 @@ export function QuizCard({ quiz, onDelete }: QuizCardProps) {
             type="button"
             onClick={handleCreateRoom}
             disabled={creating}
-            className="flex-1 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-3 py-2 text-sm font-semibold text-white shadow-sm shadow-mln-red/20 transition hover:brightness-110 disabled:opacity-60"
+            className="flex-1 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-3 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-md shadow-mln-red/25 transition hover:brightness-110 disabled:opacity-60"
           >
             {creating ? '...' : 'Mở phòng'}
           </button>
           <button
             type="button"
             onClick={() => onDelete(quiz._id)}
-            className="rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-sm text-mln-dim transition hover:border-mln-red/40 hover:text-mln-red-light"
+            className="rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-xs text-mln-dim transition hover:border-mln-red/40 hover:text-mln-red-light"
           >
             Xóa
           </button>

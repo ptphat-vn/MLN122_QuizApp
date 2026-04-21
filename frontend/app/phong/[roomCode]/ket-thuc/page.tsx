@@ -95,11 +95,11 @@ function EndPageShell({
 
       {/* Header */}
       <div className="text-center animate-fade-in">
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-mln-gold/30 bg-mln-gold/10 px-4 py-1.5 text-xs font-semibold text-mln-gold">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-mln-gold/30 bg-mln-gold/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-mln-gold">
           <span className="animate-star-pulse">★</span>
           MLN122 — Kết thúc kỳ thi
         </div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-mln-cream lg:text-5xl">
+        <h1 className="text-4xl font-extrabold uppercase tracking-tight text-mln-cream lg:text-5xl">
           {title}
         </h1>
         {subtitle && <p className="mt-2 text-mln-dim">{subtitle}</p>}
@@ -123,14 +123,15 @@ function EndPageShell({
 
           {/* Full leaderboard */}
           <section className="animate-fade-in">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-mln-dim">
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.25em] text-mln-dim">
               Bảng xếp hạng đầy đủ
             </p>
             <LeaderboardTable rankings={rankings} />
           </section>
         </>
       ) : (
-        <section className="glass-card grid min-h-40 place-items-center p-8 text-center">
+        <section className="overflow-hidden rounded-2xl border border-white/8 bg-black/35 grid min-h-40 place-items-center p-8 text-center">
+          <div className="mln-top-bar" />
           <div>
             <p className="text-3xl text-mln-gold">★</p>
             <p className="mt-2 text-mln-dim">Chưa có dữ liệu xếp hạng.</p>
@@ -162,7 +163,7 @@ function HostEndRoom({ sessionId }: { sessionId: string }) {
       actions={
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-6 py-3 font-semibold text-white shadow-lg shadow-mln-red/25 transition hover:brightness-110"
+          className="inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-6 py-3 font-bold uppercase tracking-widest text-white shadow-lg shadow-mln-red/25 transition hover:brightness-110"
         >
           ★ Về bảng điều khiển
         </Link>
@@ -183,13 +184,13 @@ function PlayerEndRoom() {
         <>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 font-semibold text-mln-cream transition hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 font-bold uppercase tracking-wide text-mln-cream transition hover:bg-white/10"
           >
             → Về trang chủ
           </Link>
           <Link
             href="/tham-gia"
-            className="inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-6 py-3 font-semibold text-white shadow-lg shadow-mln-red/25 transition hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-6 py-3 font-bold uppercase tracking-widest text-white shadow-lg shadow-mln-red/25 transition hover:brightness-110"
           >
             ★ Thi lại
           </Link>

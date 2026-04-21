@@ -13,9 +13,9 @@ export default async function EditQuizPage({ params }: EditQuizPageProps) {
     <main className="mx-auto mt-6 w-[min(1200px,calc(100%-2rem))]">
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-sm font-semibold text-mln-dim transition hover:bg-white/10 hover:text-mln-cream"
+        className="mb-4 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-xs font-bold uppercase tracking-wide text-mln-dim transition hover:bg-white/10 hover:text-mln-cream"
       >
-        ← Quay lại Dashboard
+        ← Dashboard
       </Link>
       <QuizEditor quizId={id} />
     </main>

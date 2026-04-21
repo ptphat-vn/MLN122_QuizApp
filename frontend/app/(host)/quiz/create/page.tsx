@@ -36,59 +36,70 @@ export default function CreateQuizPage() {
       {/* Back */}
       <Link
         href="/dashboard"
-        className="mb-5 inline-flex items-center gap-1.5 text-sm text-mln-dim transition hover:text-mln-cream"
+        className="mb-5 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-mln-dim transition hover:text-mln-cream"
       >
         ← Quay lại Dashboard
       </Link>
 
-      <div className="glass-card p-7">
-        <h1 className="text-2xl font-bold text-mln-cream">Tạo bộ đề mới</h1>
-        <p className="mt-1 text-sm text-mln-dim">
-          Nhập tiêu đề và mô tả, sau đó biên soạn câu hỏi.
-        </p>
+      <div className="overflow-hidden rounded-2xl border border-white/8 bg-black/35 shadow-xl">
+        <div className="mln-top-bar" />
+        <div className="border-b border-white/8 bg-linear-to-r from-mln-red/15 to-transparent px-7 py-5">
+          <div className="mln-ink-badge mb-2">★ Biên soạn</div>
+          <h1 className="text-2xl font-extrabold uppercase tracking-tight text-mln-cream">
+            Tạo bộ đề mới
+          </h1>
+          <p className="mt-1 text-sm text-mln-dim">
+            Nhập tiêu đề và mô tả, sau đó biên soạn câu hỏi.
+          </p>
+        </div>
 
-        <div className="mt-6 space-y-5">
-          <div>
-            <label
-              htmlFor="title"
-              className="mb-1.5 block text-sm font-medium text-mln-dim"
+        <div className="px-7 py-7">
+          <div className="space-y-5">
+            <div>
+              <label
+                htmlFor="title"
+                className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-mln-dim"
+              >
+                Tiêu đề bộ đề
+              </label>
+              <input
+                id="title"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:bg-mln-red/5 focus:ring-2 focus:ring-mln-red/15"
+                placeholder="Ví dụ: Ôn Tập Kinh Tế Chính Trị Chương 2"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="description"
+                className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-mln-dim"
+              >
+                Mô tả{' '}
+                <span className="text-mln-surface normal-case tracking-normal">
+                  (tùy chọn)
+                </span>
+              </label>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                rows={4}
+                className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:bg-mln-red/5 focus:ring-2 focus:ring-mln-red/15"
+                placeholder="Mục tiêu kiểm tra, phạm vi kiến thức..."
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCreate}
+              disabled={saving}
+              className="rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-7 py-3 font-bold uppercase tracking-widest text-white shadow-lg shadow-mln-red/25 transition hover:brightness-110 disabled:opacity-60"
             >
-              Tiêu đề bộ đề
-            </label>
-            <input
-              id="title"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/6 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:ring-2 focus:ring-mln-red/10"
-              placeholder="Ví dụ: Ôn Tập Kinh Tế Chính Trị Chương 2"
-            />
+              {saving ? 'Đang lưu...' : '★ Tạo bộ đề'}
+            </button>
           </div>
-
-          <div>
-            <label
-              htmlFor="description"
-              className="mb-1.5 block text-sm font-medium text-mln-dim"
-            >
-              Mô tả <span className="text-mln-surface">(tùy chọn)</span>
-            </label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              rows={4}
-              className="w-full resize-none rounded-xl border border-white/10 bg-white/6 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:ring-2 focus:ring-mln-red/10"
-              placeholder="Mục tiêu kiểm tra, phạm vi kiến thức..."
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleCreate}
-            disabled={saving}
-            className="rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-7 py-3 font-semibold text-white shadow-lg shadow-mln-red/20 transition hover:brightness-110 disabled:opacity-60"
-          >
-            {saving ? 'Đang lưu...' : '★ Tạo bộ đề'}
-          </button>
         </div>
       </div>
     </main>

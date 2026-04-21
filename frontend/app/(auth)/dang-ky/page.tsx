@@ -59,145 +59,170 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="pointer-events-none fixed left-1/2 top-0 size-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-mln-red/8 blur-3xl" />
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/3 top-0 h-96 w-96 -translate-y-1/2 rounded-full bg-mln-red/12 blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-mln-gold/8 blur-3xl" />
+      </div>
 
-      <div className="relative w-full max-w-sm animate-fade-in">
+      {/* Decorative watermarks */}
+      <p className="pointer-events-none absolute left-8 top-20 hidden select-none font-mono text-6xl font-black text-mln-red/5 lg:block">
+        G = c + v + m
+      </p>
+
+      <div className="relative w-full max-w-md animate-fade-in">
         <Link
-          href="/"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm text-mln-dim transition hover:text-mln-cream"
+          href="/noi-dung"
+          className="mb-5 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-mln-dim transition hover:text-mln-cream"
         >
-          ← Về trang chủ
+          ← Về trang nội dung
         </Link>
 
-        <div className="glass-card p-8">
-          <div className="mb-6 flex items-center gap-2.5">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark text-base font-bold text-white shadow-lg shadow-mln-red/30">
-              ★
-            </span>
-            <span className="text-lg font-bold text-mln-cream">MLN122</span>
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/45 shadow-2xl shadow-black/60 backdrop-blur-xl ring-1 ring-mln-red/15">
+          <div className="mln-top-bar" />
+
+          {/* Card header */}
+          <div className="border-b border-white/8 bg-linear-to-r from-mln-red/20 via-mln-red/8 to-transparent px-7 py-5">
+            <div className="flex items-center gap-3">
+              <span className="flex size-10 items-center justify-center rounded-xl bg-mln-red/20 text-xl text-mln-gold ring-1 ring-mln-red/30">★</span>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-mln-dim">Kinh Tế Chính Trị Mác-Lênin</p>
+                <p className="mt-0.5 text-sm font-extrabold uppercase tracking-wide text-mln-cream">Tạo Tài Khoản · MLN122</p>
+              </div>
+            </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-mln-cream">Tạo tài khoản</h1>
-          <p className="mt-1 text-sm text-mln-dim">
-            Quản lý bộ đề và mở phòng thi trực tiếp.
-          </p>
+          <div className="px-7 py-7">
+            <h1 className="text-2xl font-extrabold uppercase tracking-tight text-mln-cream">Đăng ký</h1>
+            <p className="mt-1 text-sm text-mln-dim">
+              Quản lý bộ đề và mở phòng thi trực tiếp.
+            </p>
 
-          <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label
-                htmlFor="name"
-                className="mb-1.5 block text-sm font-medium text-mln-dim"
-              >
-                Họ và tên
-              </label>
-              <input
-                id="name"
-                type="text"
-                {...register('name')}
-                className="w-full rounded-xl border border-white/10 bg-white/6 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:ring-2 focus:ring-mln-red/10"
-                placeholder="Nguyễn Văn A"
-              />
-              {errors.name ? (
-                <p className="mt-1.5 text-xs text-mln-red-light">
-                  {errors.name.message}
-                </p>
-              ) : null}
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-1.5 block text-sm font-medium text-mln-dim"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                {...register('email')}
-                className="w-full rounded-xl border border-white/10 bg-white/6 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:ring-2 focus:ring-mln-red/10"
-                placeholder="teacher@school.vn"
-              />
-              {errors.email ? (
-                <p className="mt-1.5 text-xs text-mln-red-light">
-                  {errors.email.message}
-                </p>
-              ) : null}
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-1.5 block text-sm font-medium text-mln-dim"
-              >
-                Mật khẩu
-              </label>
-              <input
-                id="password"
-                type="password"
-                {...register('password')}
-                className="w-full rounded-xl border border-white/10 bg-white/6 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:ring-2 focus:ring-mln-red/10"
-                placeholder="••••••••"
-              />
-              {/* Password strength bar */}
-              <div className="mt-2 h-1 overflow-hidden rounded-full bg-mln-surface">
-                <div
-                  className="h-full rounded-full bg-linear-to-r from-mln-red to-mln-gold transition-all duration-300"
-                  style={{ width: `${passwordStrength * 25}%` }}
+            <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+              <div>
+                <label
+                  htmlFor="name"
+                  className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-mln-dim"
+                >
+                  Họ và tên
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  {...register('name')}
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:bg-mln-red/5 focus:ring-2 focus:ring-mln-red/15"
+                  placeholder="Nguyễn Văn A"
                 />
+                {errors.name ? (
+                  <p className="mt-1.5 text-xs text-mln-red-light">
+                    {errors.name.message}
+                  </p>
+                ) : null}
               </div>
-              <p className="mt-1 text-xs text-mln-dim">
-                Độ mạnh: {strengthLabel[Math.max(passwordStrength - 1, 0)]}
-              </p>
-              {errors.password ? (
-                <p className="mt-1.5 text-xs text-mln-red-light">
-                  {errors.password.message}
-                </p>
-              ) : null}
-            </div>
 
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="mb-1.5 block text-sm font-medium text-mln-dim"
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-mln-dim"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  {...register('email')}
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:bg-mln-red/5 focus:ring-2 focus:ring-mln-red/15"
+                  placeholder="teacher@school.vn"
+                />
+                {errors.email ? (
+                  <p className="mt-1.5 text-xs text-mln-red-light">
+                    {errors.email.message}
+                  </p>
+                ) : null}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-mln-dim"
+                >
+                  Mật khẩu
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  {...register('password')}
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:bg-mln-red/5 focus:ring-2 focus:ring-mln-red/15"
+                  placeholder="••••••••"
+                />
+                {/* Password strength bar */}
+                <div className="mt-2 h-1 overflow-hidden rounded-full bg-mln-surface">
+                  <div
+                    className="h-full rounded-full bg-linear-to-r from-mln-red to-mln-gold transition-all duration-300"
+                    style={{ width: `${passwordStrength * 25}%` }}
+                  />
+                </div>
+                <p className="mt-1 text-xs text-mln-dim">
+                  Độ mạnh: <span className="font-semibold text-mln-cream/70">{strengthLabel[Math.max(passwordStrength - 1, 0)]}</span>
+                </p>
+                {errors.password ? (
+                  <p className="mt-1.5 text-xs text-mln-red-light">
+                    {errors.password.message}
+                  </p>
+                ) : null}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-mln-dim"
+                >
+                  Xác nhận mật khẩu
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  {...register('confirmPassword')}
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:bg-mln-red/5 focus:ring-2 focus:ring-mln-red/15"
+                  placeholder="••••••••"
+                />
+                {errors.confirmPassword ? (
+                  <p className="mt-1.5 text-xs text-mln-red-light">
+                    {errors.confirmPassword.message}
+                  </p>
+                ) : null}
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="mt-2 w-full rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark py-3 font-bold uppercase tracking-widest text-white shadow-lg shadow-mln-red/25 transition hover:brightness-110 disabled:opacity-60"
               >
-                Xác nhận mật khẩu
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                {...register('confirmPassword')}
-                className="w-full rounded-xl border border-white/10 bg-white/6 px-4 py-3 text-mln-cream outline-none transition placeholder:text-mln-surface focus:border-mln-red/50 focus:ring-2 focus:ring-mln-red/10"
-                placeholder="••••••••"
-              />
-              {errors.confirmPassword ? (
-                <p className="mt-1.5 text-xs text-mln-red-light">
-                  {errors.confirmPassword.message}
-                </p>
-              ) : null}
+                {isSubmitting ? 'Đang tạo tài khoản...' : 'Tạo tài khoản'}
+              </button>
+            </form>
+
+            <div className="mt-5 border-t border-white/8 pt-5">
+              <p className="text-center text-sm text-mln-dim">
+                Đã có tài khoản?{' '}
+                <Link
+                  href="/dang-nhap"
+                  className="font-bold text-mln-red transition hover:text-mln-red-light"
+                >
+                  Đăng nhập ngay
+                </Link>
+              </p>
             </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="mt-2 w-full rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark py-3 font-semibold text-white shadow-lg shadow-mln-red/20 transition hover:brightness-110 disabled:opacity-60"
-            >
-              {isSubmitting ? 'Đang tạo tài khoản...' : 'Tạo tài khoản'}
-            </button>
-          </form>
-
-          <p className="mt-5 text-center text-sm text-mln-dim">
-            Đã có tài khoản?{' '}
-            <Link
-              href="/dang-nhap"
-              className="font-medium text-mln-red transition hover:text-mln-red-light"
-            >
-              Đăng nhập ngay
-            </Link>
-          </p>
+          </div>
         </div>
+
+        <blockquote className="mt-4 rounded-xl border border-mln-gold/20 bg-mln-gold/5 px-5 py-3.5 text-xs italic text-mln-dim">
+          &ldquo;Lao động là nguồn gốc của mọi của cải.&rdquo;{' '}
+          <cite className="not-italic font-bold text-mln-gold/80">— K. Marx</cite>
+        </blockquote>
       </div>
+    </main>
+  );
     </main>
   );
 }

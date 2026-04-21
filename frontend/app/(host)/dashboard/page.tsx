@@ -28,19 +28,26 @@ export default function DashboardPage() {
 
   return (
     <main className="mx-auto mt-8 w-[min(1100px,calc(100%-2rem))]">
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-mln-cream">Bộ đề của tôi</h1>
-          <p className="mt-0.5 text-sm text-mln-dim">
-            Quản lý bộ đề và mở phòng thi realtime.
-          </p>
+      {/* Header */}
+      <header className="mb-8 overflow-hidden rounded-2xl border border-white/8 bg-black/30">
+        <div className="mln-top-bar" />
+        <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
+          <div>
+            <div className="mln-ink-badge mb-2">★ Giảng Viên</div>
+            <h1 className="text-3xl font-extrabold uppercase tracking-tight text-mln-cream">
+              Bộ Đề Của Tôi
+            </h1>
+            <p className="mt-1 text-sm text-mln-dim">
+              Quản lý bộ đề và mở phòng thi realtime.
+            </p>
+          </div>
+          <Link
+            href="/quiz/create"
+            className="inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-5 py-2.5 font-bold uppercase tracking-wide text-white shadow-lg shadow-mln-red/25 transition hover:brightness-110"
+          >
+            <span className="text-mln-gold">★</span> Tạo bộ đề mới
+          </Link>
         </div>
-        <Link
-          href="/quiz/create"
-          className="inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-5 py-2.5 font-semibold text-white shadow-md shadow-mln-red/20 transition hover:brightness-110"
-        >
-          ★ Tạo bộ đề mới
-        </Link>
       </header>
 
       {loading ? (
@@ -55,9 +62,10 @@ export default function DashboardPage() {
       ) : null}
 
       {!loading && quizzes.length === 0 ? (
-        <section className="glass-card p-12 text-center">
-          <p className="mb-3 text-4xl text-mln-gold">★</p>
-          <p className="text-xl font-semibold text-mln-cream">
+        <section className="overflow-hidden rounded-2xl border border-white/8 bg-black/30 p-12 text-center">
+          <div className="mln-top-bar" />
+          <p className="mb-3 text-5xl text-mln-gold animate-star-pulse">★</p>
+          <p className="text-xl font-extrabold uppercase tracking-wide text-mln-cream">
             Chưa có bộ đề nào.
           </p>
           <p className="mt-2 text-sm text-mln-dim">
@@ -65,9 +73,9 @@ export default function DashboardPage() {
           </p>
           <Link
             href="/quiz/create"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-6 py-3 font-semibold text-white shadow-lg shadow-mln-red/20 transition hover:brightness-110"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-6 py-3 font-bold uppercase tracking-wide text-white shadow-lg shadow-mln-red/25 transition hover:brightness-110"
           >
-            ★ Tạo bộ đề đầu tiên
+            <span className="text-mln-gold">★</span> Tạo bộ đề đầu tiên
           </Link>
         </section>
       ) : null}

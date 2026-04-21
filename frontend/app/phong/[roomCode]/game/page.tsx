@@ -51,33 +51,43 @@ function HostGameRoom({
 
   const statusLabel: Record<string, string> = {
     starting: '⏳ Chuẩn bị câu hỏi đầu tiên...',
-    question: '❓ Đang hiển thị câu hỏi',
-    answer_reveal: '✅ Đang hiển thị đáp án',
-    leaderboard: '🏆 Bảng xếp hạng',
-    ended: '🎉 Kỳ thi kết thúc',
+    question: '★ Đang hiển thị câu hỏi',
+    answer_reveal: '✔ Đang hiển thị đáp án',
+    leaderboard: '★ Bảng xếp hạng',
+    ended: '★ Kỳ thi kết thúc',
   };
 
   return (
-    <main className="mx-auto grid min-h-screen w-[min(1100px,calc(100%-2rem))] gap-5 py-6">
-      <div className="justify-self-start self-start">
+    <main className="mx-auto grid min-h-screen w-[min(1100px,calc(100%-2rem))] content-start gap-5 py-6">
+      <div className="flex items-center justify-between">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-sm font-semibold text-mln-dim transition hover:bg-white/10 hover:text-mln-cream"
+          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-xs font-bold uppercase tracking-wide text-mln-dim transition hover:bg-white/10 hover:text-mln-cream"
         >
-          ← Quay lại Dashboard
+          ← Dashboard
         </Link>
+        <button
+          type="button"
+          onClick={endGame}
+          className="inline-flex items-center gap-2 rounded-xl border border-mln-red/30 bg-mln-red/10 px-4 py-2 text-xs font-bold uppercase tracking-wide text-mln-red transition hover:bg-mln-red/20"
+        >
+          Kết thúc sớm
+        </button>
       </div>
 
-      <section className="glass-card p-6">
-        <p className="text-sm font-semibold uppercase tracking-wide text-mln-dim">
-          {statusLabel[gameStatus] ?? 'Đang chờ...'}
-        </p>
-        <h1 className="mt-2 text-3xl font-extrabold text-mln-cream">
-          {currentQuestion?.content ?? 'Host đang điều khiển game'}
+      <section className="overflow-hidden rounded-2xl border border-white/8 bg-black/35 p-6">
+        <div className="mln-top-bar" />
+        <div className="flex items-center gap-2">
+          <span className="mln-ink-badge">
+            {statusLabel[gameStatus] ?? 'Đang chờ...'}
+          </span>
+          <span className="ml-auto rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs font-semibold text-mln-dim">
+            {players.length} người chơi
+          </span>
+        </div>
+        <h1 className="mt-3 text-2xl font-extrabold uppercase tracking-tight text-mln-cream">
+          {currentQuestion?.content ?? 'Host đang điều khiển kỳ thi'}
         </h1>
-        <p className="mt-1 text-mln-dim">
-          {players.length} người chơi đang online
-        </p>
       </section>
 
       {answerStats.length > 0 && (
@@ -92,16 +102,6 @@ function HostGameRoom({
       {leaderboard.length > 0 && gameStatus === 'leaderboard' && (
         <LeaderboardTable rankings={leaderboard} />
       )}
-
-      <div className="justify-self-end self-start">
-        <button
-          type="button"
-          onClick={endGame}
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-xl border border-mln-red/30 bg-mln-red/10 px-4 py-2 text-sm font-semibold text-mln-red transition hover:bg-mln-red/20"
-        >
-          Kết thúc sớm
-        </button>
-      </div>
     </main>
   );
 }
@@ -128,16 +128,17 @@ function PlayerGameRoom({ roomCode }: { roomCode: string }) {
 
   if (gameStatus === 'leaderboard') {
     return (
-      <main className="mx-auto flex min-h-screen w-[min(900px,calc(100%-2rem))] flex-col justify-center gap-5 py-6">
-        <section className="glass-card p-8 text-center">
-          <p className="text-4xl">🏆</p>
-          <h2 className="mt-3 text-2xl font-extrabold text-mln-cream">
+      <main className="flex h-dvh items-center justify-center px-4">
+        <section className="w-full max-w-md overflow-hidden rounded-2xl border border-white/8 bg-black/35 p-8 text-center">
+          <div className="mln-top-bar" />
+          <span className="text-3xl text-mln-gold">★</span>
+          <h2 className="mt-3 text-xl font-extrabold uppercase tracking-wide text-mln-cream">
             Bảng xếp hạng
           </h2>
-          <p className="mt-5 text-6xl font-extrabold text-mln-gold">
+          <p className="mt-5 font-mono text-6xl font-extrabold text-mln-gold">
             #{myRank > 0 ? myRank : '—'}
           </p>
-          <p className="mt-2 text-lg font-semibold text-mln-cream">
+          <p className="mt-2 text-lg font-bold text-mln-cream">
             {myScore.toLocaleString()} điểm
           </p>
           <p className="mt-1 text-sm text-mln-dim">
@@ -149,39 +150,70 @@ function PlayerGameRoom({ roomCode }: { roomCode: string }) {
   }
 
   return (
-    <main className="relative mx-auto flex min-h-screen w-[min(900px,calc(100%-2rem))] flex-col justify-center gap-5 py-6">
-      <div className="absolute left-0 top-6">
+    <main className="flex min-h-dvh flex-col">
+      {/* Top bar */}
+      <header className="flex flex-none items-center justify-between border-b border-white/6 px-4 py-3 sm:px-6">
         <Link
           href="/tham-gia"
-          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-sm font-semibold text-mln-dim transition hover:bg-white/10 hover:text-mln-cream"
+          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-xs font-bold uppercase tracking-wide text-mln-dim transition hover:bg-white/10 hover:text-mln-cream"
         >
           ← Quay lại
         </Link>
-      </div>
+        {myScore > 0 && (
+          <div className="flex items-center gap-1.5 rounded-xl border border-mln-gold/20 bg-mln-gold/8 px-3 py-1.5">
+            <span className="font-mono text-sm font-extrabold text-mln-gold">
+              {myScore.toLocaleString()}
+            </span>
+            <span className="text-[10px] font-bold uppercase tracking-wide text-mln-dim">
+              điểm
+            </span>
+          </div>
+        )}
+      </header>
 
-      {currentQuestion && (
-        <>
+      {/* Content — stacked naturally, scrollable */}
+      <div className="flex flex-1 flex-col gap-4 px-4 py-5 sm:px-6">
+        {/* Question */}
+        {currentQuestion ? (
           <QuestionDisplay question={currentQuestion.content} />
-          <CountdownRing value={timeLeft} max={currentQuestion.timeLimit} />
+        ) : (
+          <div className="overflow-hidden rounded-2xl border border-white/8 bg-black/35 p-6 text-center">
+            <div className="mln-top-bar" />
+            <p className="text-sm text-mln-dim">Chờ câu hỏi tiếp theo...</p>
+          </div>
+        )}
 
-          {hasAnswered ? (
-            <section className="glass-card p-6 text-center">
-              <p className="text-xl font-bold text-mln-cream">✅ Đã trả lời!</p>
-              {totalPlayers > 0 ? (
-                <p className="mt-2 text-mln-dim">
+        {/* Countdown */}
+        {currentQuestion && (
+          <div className="flex justify-center">
+            <CountdownRing value={timeLeft} max={currentQuestion.timeLimit} />
+          </div>
+        )}
+
+        {/* Answers */}
+        {currentQuestion &&
+          (hasAnswered || gameStatus === 'answer_reveal' ? (
+            <div className="overflow-hidden rounded-2xl border border-white/8 bg-black/35 p-5 text-center">
+              <div className="mln-top-bar" />
+              <p className="text-lg font-extrabold uppercase tracking-wide text-mln-cream">
+                {hasAnswered ? '★ Đã trả lời!' : 'Hết giờ!'}
+              </p>
+              {hasAnswered && totalPlayers > 0 ? (
+                <p className="mt-1.5 text-sm text-mln-dim">
                   {answeredCount}/{totalPlayers} người đã trả lời
                 </p>
+              ) : hasAnswered ? (
+                <p className="mt-1.5 text-sm text-mln-dim">
+                  Chờ kết quả từ host...
+                </p>
               ) : (
-                <p className="mt-2 text-mln-dim">Chờ kết quả từ host...</p>
+                <p className="mt-1.5 text-sm text-mln-dim">
+                  Chờ câu hỏi tiếp theo...
+                </p>
               )}
-            </section>
-          ) : gameStatus === 'answer_reveal' ? (
-            <section className="glass-card p-6 text-center">
-              <p className="text-xl font-bold text-mln-cream">⏰ Hết giờ!</p>
-              <p className="mt-1 text-mln-dim">Chờ câu hỏi tiếp theo...</p>
-            </section>
+            </div>
           ) : (
-            <section className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-2">
               {currentQuestion.options.map((option, index) => (
                 <AnswerButton
                   key={option.id}
@@ -191,18 +223,9 @@ function PlayerGameRoom({ roomCode }: { roomCode: string }) {
                   onClick={() => submitAnswer(currentQuestion._id, option.id)}
                 />
               ))}
-            </section>
-          )}
-        </>
-      )}
-
-      {gameStatus === 'answer_reveal' && !currentQuestion && (
-        <section className="glass-card p-6 text-center">
-          <p className="text-xl font-bold text-mln-cream">
-            Chờ câu hỏi tiếp theo...
-          </p>
-        </section>
-      )}
+            </div>
+          ))}
+      </div>
     </main>
   );
 }

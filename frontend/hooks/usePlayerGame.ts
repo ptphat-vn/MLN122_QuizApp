@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useSocket } from '@/hooks/useSocket';
+import { useGameStore } from '@/stores/gameStore';
 import { usePlayerStore } from '@/stores/playerStore';
 import { GameStatus, Question, Ranking } from '@/types';
 
@@ -83,6 +84,8 @@ export function usePlayerGame(): UsePlayerGameResult {
     socket.on('leaderboard:show', ({ rankings }: { rankings: Ranking[] }) => {
       setLeaderboard(rankings);
       setGameStatus('leaderboard');
+      // Persist to gameStore so ket-thuc page can display it after navigation
+      useGameStore.getState().setLeaderboard(rankings);
       // Find this player's rank from the leaderboard
       const myNickname = usePlayerStore.getState().nickname;
       const myEntry = rankings.find(

@@ -127,7 +127,13 @@ function Reveal({
   );
 }
 
-function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
+function AnimatedCounter({
+  target,
+  suffix = '',
+}: {
+  target: number;
+  suffix?: string;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const [value, setValue] = useState(0);
 
@@ -165,7 +171,13 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
   );
 }
 
-function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+function Card({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <article
       className={`h-full rounded-2xl border border-white/14 bg-black/30 p-6 backdrop-blur-xl shadow-[0_10px_32px_rgba(0,0,0,0.32)] ${className}`}
@@ -220,7 +232,10 @@ export default function ContentLandingPage() {
       canvas.height = window.innerHeight;
       particles.length = 0;
 
-      const count = Math.min(110, Math.max(50, Math.round(window.innerWidth / 18)));
+      const count = Math.min(
+        110,
+        Math.max(50, Math.round(window.innerWidth / 18)),
+      );
       for (let i = 0; i < count; i += 1) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -417,7 +432,10 @@ export default function ContentLandingPage() {
   }, []);
 
   return (
-    <main ref={rootRef} className="landing-single-scroll font-body relative min-h-screen overflow-x-clip">
+    <main
+      ref={rootRef}
+      className="landing-single-scroll font-body relative min-h-screen overflow-x-clip"
+    >
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800;900&display=swap');
 
@@ -442,13 +460,14 @@ export default function ContentLandingPage() {
         }
       `}</style>
 
-      <canvas ref={canvasRef} className="landing-particles" />
       <div ref={cursorRef} className="landing-cursor hidden md:block" />
       <div ref={ringRef} className="landing-cursor-ring hidden md:block" />
 
       <div
         className={`fixed left-0 right-0 top-0 z-40 h-16 border-b transition duration-300 sm:h-18 ${
-          navScrolled ? 'border-[#d4a017]/30 bg-black/45 backdrop-blur-xl' : 'border-transparent bg-transparent'
+          navScrolled
+            ? 'border-[#d4a017]/30 bg-black/45 backdrop-blur-xl'
+            : 'border-transparent bg-transparent'
         }`}
       />
       <LandingSwitchNav />
@@ -475,7 +494,9 @@ export default function ContentLandingPage() {
 
         <div className="relative z-10 mx-auto max-w-6xl">
           <Reveal>
-            <p className="gsap-hero font-kicker text-base text-[#d4a017]">Kinh Tế Chính Trị Mác-Lênin · Chương 3</p>
+            <p className="gsap-hero font-kicker text-base text-[#d4a017]">
+              Kinh Tế Chính Trị Mác-Lênin · Chương 3
+            </p>
           </Reveal>
           <Reveal delay={90}>
             <h1 className="gsap-hero mt-5 font-title text-5xl font-black leading-[0.95] sm:text-7xl lg:text-8xl">
@@ -488,7 +509,9 @@ export default function ContentLandingPage() {
             <p className="gsap-hero mt-7 max-w-3xl font-body text-xl leading-relaxed text-[#f0e6c4]">
               Chương 3: Giá Trị Thặng Dư Trong Nền Kinh Tế Thị Trường
             </p>
-            <p className="gsap-hero mt-2 font-kicker text-lg text-[#d4a017]">Nguồn gốc · Bản chất · Phương pháp sản xuất</p>
+            <p className="gsap-hero mt-2 font-kicker text-lg text-[#d4a017]">
+              Nguồn gốc · Bản chất · Phương pháp sản xuất
+            </p>
           </Reveal>
 
           <Reveal delay={240}>
@@ -498,7 +521,6 @@ export default function ContentLandingPage() {
           </Reveal>
 
           <div className="landing-scroll-cue">
-            <span className="font-label">SCROLL</span>
             <span className="landing-scroll-line" />
           </div>
         </div>
@@ -507,29 +529,45 @@ export default function ContentLandingPage() {
       <section className="gsap-section px-6 pb-16">
         <div className="mx-auto max-w-6xl">
           <Reveal>
-            <h2 className="font-title text-4xl font-bold text-[#f9edc3]">I. Lý Luận của C. Mác về Giá Trị Thặng Dư</h2>
-            <p className="mt-2 font-body text-2xl text-[#d4a017]">1. Nguồn gốc của giá trị thặng dư</p>
+            <h2 className="font-title text-4xl font-bold text-[#f9edc3]">
+              I. Lý Luận của C. Mác về Giá Trị Thặng Dư
+            </h2>
+            <p className="mt-2 font-body text-2xl text-[#d4a017]">
+              1. Nguồn gốc của giá trị thặng dư
+            </p>
           </Reveal>
 
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
             <Reveal direction="left">
               <Card className="border-[#c0392b]/45">
-                <p className="font-kicker text-xl text-[#d4a017]">H - T - H (Lưu thông hàng hóa giản đơn)</p>
+                <p className="font-kicker text-xl text-[#d4a017]">
+                  H - T - H (Lưu thông hàng hóa giản đơn)
+                </p>
                 <ul className="mt-3 space-y-2 text-lg leading-relaxed text-[#f1e6c5]">
                   <li>Bán thứ mình có để mua thứ mình cần.</li>
                   <li>Mục đích: giá trị sử dụng (tiêu dùng).</li>
-                  <li>Ví dụ: Laptop cũ → 5 triệu → Điện thoại mới. Kết thúc.</li>
+                  <li>
+                    Ví dụ: Laptop cũ → 5 triệu → Điện thoại mới. Kết thúc.
+                  </li>
                 </ul>
               </Card>
             </Reveal>
 
             <Reveal direction="right" delay={60}>
               <Card className="border-[#d4a017]/45">
-                <p className="font-kicker text-xl text-[#d4a017]">T - H - T&apos; (Lưu thông tư bản)</p>
+                <p className="font-kicker text-xl text-[#d4a017]">
+                  T - H - T&apos; (Lưu thông tư bản)
+                </p>
                 <ul className="mt-3 space-y-2 text-lg leading-relaxed text-[#f1e6c5]">
-                  <li>Bỏ tiền đầu tư để thu tiền lớn hơn: T&apos; = T + m (m &gt; 0).</li>
+                  <li>
+                    Bỏ tiền đầu tư để thu tiền lớn hơn: T&apos; = T + m (m &gt;
+                    0).
+                  </li>
                   <li>Mục đích: giá trị thặng dư (lợi nhuận).</li>
-                  <li>Ví dụ: 50 triệu → server + tool → thu 100 triệu. Lặp lại mãi.</li>
+                  <li>
+                    Ví dụ: 50 triệu → server + tool → thu 100 triệu. Lặp lại
+                    mãi.
+                  </li>
                 </ul>
               </Card>
             </Reveal>
@@ -538,8 +576,12 @@ export default function ContentLandingPage() {
           <Reveal delay={120}>
             <Card className="mt-5 border-[#c0392b]/45 bg-[#c0392b]/12 p-5">
               <p className="text-xl leading-relaxed text-[#f8e9c4]">
-                Bí mật: mua rẻ bán đắt không tạo giá trị mới cho xã hội. Nguồn gốc thực sự là nhà tư bản mua được hàng hóa
-                đặc biệt: <span className="font-kicker text-2xl text-[#d4a017]">SỨC LAO ĐỘNG</span>.
+                Bí mật: mua rẻ bán đắt không tạo giá trị mới cho xã hội. Nguồn
+                gốc thực sự là nhà tư bản mua được hàng hóa đặc biệt:{' '}
+                <span className="font-kicker text-2xl text-[#d4a017]">
+                  SỨC LAO ĐỘNG
+                </span>
+                .
               </p>
             </Card>
           </Reveal>
@@ -550,23 +592,28 @@ export default function ContentLandingPage() {
         <div className="mx-auto grid max-w-6xl items-stretch gap-5 md:grid-cols-2">
           <Reveal direction="left" className="h-full">
             <Card>
-              <h3 className="font-title text-3xl text-[#f9edc3]">Giá trị (cơ sở tiền lương)</h3>
+              <h3 className="font-title text-3xl text-[#f9edc3]">
+                Giá trị (cơ sở tiền lương)
+              </h3>
               <p className="mt-3 text-xl leading-relaxed text-[#f1e6c5]">
-                Toàn bộ chi phí sinh hoạt (ăn, ở, mặc, học tập, nuôi con...) để người lao động duy trì và tái tạo sức làm
-                việc.
+                Toàn bộ chi phí sinh hoạt (ăn, ở, mặc, học tập, nuôi con...) để
+                người lao động duy trì và tái tạo sức làm việc.
               </p>
               <p className="mt-3 rounded-lg border border-[#d4a017]/35 bg-black/30 px-3 py-2 text-lg text-[#d4a017]">
-                Ví dụ: Content Creator cần 10 triệu/tháng để sống → lương 10 triệu.
+                Ví dụ: Content Creator cần 10 triệu/tháng để sống → lương 10
+                triệu.
               </p>
             </Card>
           </Reveal>
 
           <Reveal direction="right" delay={80} className="h-full">
             <Card className="border-[#d4a017]/40">
-              <h3 className="font-title text-3xl text-[#f9edc3]">Giá trị sử dụng (tính năng đặc biệt)</h3>
+              <h3 className="font-title text-3xl text-[#f9edc3]">
+                Giá trị sử dụng (tính năng đặc biệt)
+              </h3>
               <p className="mt-3 text-xl leading-relaxed text-[#f1e6c5]">
-                Khi sử dụng, sức lao động không chỉ bù đắp giá trị bản thân mà còn tạo ra giá trị mới lớn hơn. Đây là chìa
-                khóa giải mã m.
+                Khi sử dụng, sức lao động không chỉ bù đắp giá trị bản thân mà
+                còn tạo ra giá trị mới lớn hơn. Đây là chìa khóa giải mã m.
               </p>
               <p className="mt-3 rounded-lg border border-[#c0392b]/35 bg-black/30 px-3 py-2 text-lg text-[#d4a017]">
                 Ví dụ: Content Creator đó mang về doanh thu 50 triệu/tháng.
@@ -579,7 +626,9 @@ export default function ContentLandingPage() {
       <section className="gsap-section px-6 pb-16">
         <div className="mx-auto max-w-6xl rounded-2xl border border-white/12 bg-white/4 p-6 sm:p-8">
           <Reveal>
-            <h3 className="font-title text-4xl text-[#f9edc3]">Bí Mật 8 Giờ Làm Việc</h3>
+            <h3 className="font-title text-4xl text-[#f9edc3]">
+              Bí Mật 8 Giờ Làm Việc
+            </h3>
           </Reveal>
 
           <ol className="mt-6 space-y-3">
@@ -590,8 +639,12 @@ export default function ContentLandingPage() {
                     {index + 1}
                   </span>
                   <div>
-                    <p className="font-title text-2xl text-[#f6e9c6]">{item.title}</p>
-                    <p className="font-body text-lg leading-relaxed text-[#eadcb4]">{item.desc}</p>
+                    <p className="font-title text-2xl text-[#f6e9c6]">
+                      {item.title}
+                    </p>
+                    <p className="font-body text-lg leading-relaxed text-[#eadcb4]">
+                      {item.desc}
+                    </p>
                   </div>
                 </li>
               </Reveal>
@@ -621,58 +674,103 @@ export default function ContentLandingPage() {
       <section className="gsap-section px-6 pb-16">
         <div className="mx-auto max-w-6xl rounded-2xl border border-white/12 bg-white/4 p-6 sm:p-8">
           <Reveal>
-            <p className="text-center font-label text-3xl text-[#d4a017]">G = c + (v + m)</p>
+            <p className="text-center font-label text-3xl text-[#d4a017]">
+              G = c + (v + m)
+            </p>
           </Reveal>
 
           <div className="mt-6 grid items-stretch gap-5 md:grid-cols-2">
             <Reveal direction="left" className="h-full">
               <Card>
-                <h3 className="font-title text-3xl text-[#f8e7c0]">Tư bản bất biến (c)</h3>
-                <p className="mt-3 font-kicker text-sm uppercase text-[#d4a017]">Khái niệm</p>
+                <h3 className="font-title text-3xl text-[#f8e7c0]">
+                  Tư bản bất biến (c)
+                </h3>
+                <p className="mt-3 font-kicker text-sm uppercase text-[#d4a017]">
+                  Khái niệm
+                </p>
                 <ul className="mt-3 space-y-2 text-lg leading-relaxed text-[#eadcb4]">
                   <li>
-                    <strong className="text-[#f8e7c0]">Máy móc, thiết bị, nguyên vật liệu</strong>.
+                    <strong className="text-[#f8e7c0]">
+                      Máy móc, thiết bị, nguyên vật liệu
+                    </strong>
+                    .
                   </li>
                   <li>
-                    <strong className="text-[#f8e7c0]">Lao động cụ thể</strong> chỉ bảo toàn và chuyển giá trị vào sản phẩm.
+                    <strong className="text-[#f8e7c0]">Lao động cụ thể</strong>{' '}
+                    chỉ bảo toàn và chuyển giá trị vào sản phẩm.
                   </li>
                   <li>
-                    <strong className="text-[#f8e7c0]">Không tạo ra giá trị mới</strong>.
+                    <strong className="text-[#f8e7c0]">
+                      Không tạo ra giá trị mới
+                    </strong>
+                    .
                   </li>
-                  <li>Ví dụ: máy may và vải chuyển giá trị vào áo, không sinh thêm.</li>
+                  <li>
+                    Ví dụ: máy may và vải chuyển giá trị vào áo, không sinh
+                    thêm.
+                  </li>
                 </ul>
 
-                <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">Mối quan hệ với tư bản khả biến</p>
+                <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">
+                  Mối quan hệ với tư bản khả biến
+                </p>
                 <p className="mt-2 text-lg leading-relaxed text-[#eadcb4]">
-                  <strong className="text-[#f8e7c0]">c</strong> tạo điều kiện vật chất cho sản xuất, còn{' '}
-                  <strong className="text-[#f8e7c0]">v</strong> mới là bộ phận trực tiếp tạo ra giá trị mới. Vì vậy{' '}
-                  <strong className="text-[#f8e7c0]">c và v luôn cùng tồn tại</strong>, nhưng{' '}
-                  <strong className="text-[#f8e7c0]">vai trò tạo m chỉ thuộc về v</strong>.
+                  <strong className="text-[#f8e7c0]">c</strong> tạo điều kiện
+                  vật chất cho sản xuất, còn{' '}
+                  <strong className="text-[#f8e7c0]">v</strong> mới là bộ phận
+                  trực tiếp tạo ra giá trị mới. Vì vậy{' '}
+                  <strong className="text-[#f8e7c0]">
+                    c và v luôn cùng tồn tại
+                  </strong>
+                  , nhưng{' '}
+                  <strong className="text-[#f8e7c0]">
+                    vai trò tạo m chỉ thuộc về v
+                  </strong>
+                  .
                 </p>
               </Card>
             </Reveal>
 
             <Reveal direction="right" delay={80} className="h-full">
               <Card className="border-[#d4a017]/45">
-                <h3 className="font-title text-3xl text-[#f8e7c0]">Tư bản khả biến (v)</h3>
-                <p className="mt-3 font-kicker text-sm uppercase text-[#d4a017]">Khái niệm</p>
+                <h3 className="font-title text-3xl text-[#f8e7c0]">
+                  Tư bản khả biến (v)
+                </h3>
+                <p className="mt-3 font-kicker text-sm uppercase text-[#d4a017]">
+                  Khái niệm
+                </p>
                 <ul className="mt-3 space-y-2 text-lg leading-relaxed text-[#eadcb4]">
                   <li>
-                    <strong className="text-[#f8e7c0]">Tiền mua hàng hóa sức lao động</strong>.
+                    <strong className="text-[#f8e7c0]">
+                      Tiền mua hàng hóa sức lao động
+                    </strong>
+                    .
                   </li>
                   <li>
-                    <strong className="text-[#f8e7c0]">Lao động trừu tượng</strong> tạo ra giá trị mới lớn hơn.
+                    <strong className="text-[#f8e7c0]">
+                      Lao động trừu tượng
+                    </strong>{' '}
+                    tạo ra giá trị mới lớn hơn.
                   </li>
                   <li>
-                    <strong className="text-[#f8e7c0]">Nguồn duy nhất tạo ra giá trị thặng dư</strong>.
+                    <strong className="text-[#f8e7c0]">
+                      Nguồn duy nhất tạo ra giá trị thặng dư
+                    </strong>
+                    .
                   </li>
-                  <li>Ví dụ: nhận 200.000đ/ngày, tạo 500.000đ giá trị → m = 300.000đ.</li>
+                  <li>
+                    Ví dụ: nhận 200.000đ/ngày, tạo 500.000đ giá trị → m =
+                    300.000đ.
+                  </li>
                 </ul>
 
-                <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">Ý nghĩa thực tiễn</p>
+                <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">
+                  Ý nghĩa thực tiễn
+                </p>
                 <p className="mt-2 text-lg leading-relaxed text-[#eadcb4]">
-                  Phân chia c và v giúp nhận rõ nguồn gốc m đến từ lao động sống của công nhân, đồng thời là cơ sở để doanh nghiệp
-                  kết hợp đầu tư công nghệ với nâng cao năng suất lao động.
+                  Phân chia c và v giúp nhận rõ nguồn gốc m đến từ lao động sống
+                  của công nhân, đồng thời là cơ sở để doanh nghiệp kết hợp đầu
+                  tư công nghệ với nâng cao năng suất lao động.
                 </p>
               </Card>
             </Reveal>
@@ -680,7 +778,8 @@ export default function ContentLandingPage() {
 
           <Reveal delay={120}>
             <p className="mt-5 rounded-xl border border-[#c0392b]/45 bg-[#c0392b]/10 px-4 py-3 text-xl text-[#f2dfb5]">
-              Ý nghĩa: máy móc và vốn không tạo ra m. Chỉ lao động của con người mới tạo ra giá trị mới.
+              Ý nghĩa: máy móc và vốn không tạo ra m. Chỉ lao động của con người
+              mới tạo ra giá trị mới.
             </p>
           </Reveal>
         </div>
@@ -691,66 +790,112 @@ export default function ContentLandingPage() {
           <Reveal direction="left" className="h-full">
             <Card>
               <h3 className="font-title text-3xl text-[#f8e7c0]">Tiền công</h3>
-              <p className="mt-3 font-kicker text-sm uppercase text-[#d4a017]">Khái niệm</p>
+              <p className="mt-3 font-kicker text-sm uppercase text-[#d4a017]">
+                Khái niệm
+              </p>
               <ul className="mt-3 space-y-2 text-lg leading-relaxed text-[#eadcb4]">
                 <li>
-                  Khái niệm: <strong className="text-[#f8e7c0]">giá cả hàng hóa sức lao động</strong>.
+                  Khái niệm:{' '}
+                  <strong className="text-[#f8e7c0]">
+                    giá cả hàng hóa sức lao động
+                  </strong>
+                  .
                 </li>
                 <li>
-                  Quan hệ: công nhân tạo ra <strong className="text-[#f8e7c0]">(v + m)</strong>, chỉ nhận{' '}
+                  Quan hệ: công nhân tạo ra{' '}
+                  <strong className="text-[#f8e7c0]">(v + m)</strong>, chỉ nhận{' '}
                   <strong className="text-[#f8e7c0]">v</strong>.
                 </li>
                 <li>
-                  Che giấu: <strong className="text-[#f8e7c0]">người lao động tưởng được trả đủ</strong>.
+                  Che giấu:{' '}
+                  <strong className="text-[#f8e7c0]">
+                    người lao động tưởng được trả đủ
+                  </strong>
+                  .
                 </li>
-                <li>Ví dụ: nhận 8 triệu/tháng nhưng tạo giá trị lớn hơn cho doanh nghiệp.</li>
+                <li>
+                  Ví dụ: nhận 8 triệu/tháng nhưng tạo giá trị lớn hơn cho doanh
+                  nghiệp.
+                </li>
               </ul>
 
-              <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">Mối quan hệ</p>
+              <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">
+                Mối quan hệ
+              </p>
               <p className="mt-2 text-lg leading-relaxed text-[#eadcb4]">
-                <strong className="text-[#f8e7c0]">Tiền công gắn trực tiếp với tư bản khả biến</strong>: công nhân tạo tổng giá
-                trị mới <strong className="text-[#f8e7c0]">(v + m)</strong> nhưng chỉ nhận lại{' '}
-                <strong className="text-[#f8e7c0]">v</strong> dưới dạng lương, phần{' '}
-                <strong className="text-[#f8e7c0]">m thuộc về nhà tư bản</strong>.
+                <strong className="text-[#f8e7c0]">
+                  Tiền công gắn trực tiếp với tư bản khả biến
+                </strong>
+                : công nhân tạo tổng giá trị mới{' '}
+                <strong className="text-[#f8e7c0]">(v + m)</strong> nhưng chỉ
+                nhận lại <strong className="text-[#f8e7c0]">v</strong> dưới dạng
+                lương, phần{' '}
+                <strong className="text-[#f8e7c0]">
+                  m thuộc về nhà tư bản
+                </strong>
+                .
               </p>
 
-              <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">Ý nghĩa</p>
+              <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">
+                Ý nghĩa
+              </p>
               <p className="mt-2 text-lg leading-relaxed text-[#eadcb4]">
-                Giúp người lao động hiểu rõ quyền lợi của mình và giúp doanh nghiệp xây dựng chính sách lương hợp lý, hài hòa lợi
-                ích các bên.
+                Giúp người lao động hiểu rõ quyền lợi của mình và giúp doanh
+                nghiệp xây dựng chính sách lương hợp lý, hài hòa lợi ích các
+                bên.
               </p>
             </Card>
           </Reveal>
 
           <Reveal direction="right" delay={90} className="h-full">
             <Card className="border-[#d4a017]/45">
-              <h3 className="font-title text-3xl text-[#f8e7c0]">Tuần hoàn và chu chuyển tư bản</h3>
-              <p className="mt-3 font-kicker text-sm uppercase text-[#d4a017]">Khái niệm</p>
+              <h3 className="font-title text-3xl text-[#f8e7c0]">
+                Tuần hoàn và chu chuyển tư bản
+              </h3>
+              <p className="mt-3 font-kicker text-sm uppercase text-[#d4a017]">
+                Khái niệm
+              </p>
               <ul className="mt-3 space-y-2 text-lg leading-relaxed text-[#eadcb4]">
                 <li>
-                  Mô hình: <strong className="text-[#f8e7c0]">T - H ... SX ... H&apos; - T&apos;</strong>.
+                  Mô hình:{' '}
+                  <strong className="text-[#f8e7c0]">
+                    T - H ... SX ... H&apos; - T&apos;
+                  </strong>
+                  .
                 </li>
                 <li>
-                  <strong className="text-[#f8e7c0]">Tuần hoàn</strong>: tiền tệ → sản xuất → hàng hóa → tiền tệ.
+                  <strong className="text-[#f8e7c0]">Tuần hoàn</strong>: tiền tệ
+                  → sản xuất → hàng hóa → tiền tệ.
                 </li>
                 <li>
-                  <strong className="text-[#f8e7c0]">Chu chuyển</strong>: lặp lại liên tục theo thời gian.
+                  <strong className="text-[#f8e7c0]">Chu chuyển</strong>: lặp
+                  lại liên tục theo thời gian.
                 </li>
                 <li>Ví dụ: 5 chu kỳ/năm → chu chuyển 5 vòng/năm.</li>
               </ul>
 
-              <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">Mối quan hệ</p>
+              <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">
+                Mối quan hệ
+              </p>
               <p className="mt-2 text-lg leading-relaxed text-[#eadcb4]">
-                <strong className="text-[#f8e7c0]">Tuần hoàn</strong> là một vòng vận động hoàn chỉnh;{' '}
-                <strong className="text-[#f8e7c0]">chu chuyển</strong> là nhiều vòng tuần hoàn lặp lại theo thời gian.{' '}
+                <strong className="text-[#f8e7c0]">Tuần hoàn</strong> là một
+                vòng vận động hoàn chỉnh;{' '}
+                <strong className="text-[#f8e7c0]">chu chuyển</strong> là nhiều
+                vòng tuần hoàn lặp lại theo thời gian.{' '}
                 <strong className="text-[#f8e7c0]">Sản xuất tạo m</strong>, còn{' '}
-                <strong className="text-[#f8e7c0]">lưu thông hiện thực hóa m thành tiền</strong>.
+                <strong className="text-[#f8e7c0]">
+                  lưu thông hiện thực hóa m thành tiền
+                </strong>
+                .
               </p>
 
-              <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">Ý nghĩa</p>
+              <p className="mt-4 font-kicker text-sm uppercase text-[#d4a017]">
+                Ý nghĩa
+              </p>
               <p className="mt-2 text-lg leading-relaxed text-[#eadcb4]">
-                Muốn nâng cao hiệu quả kinh doanh, doanh nghiệp phải rút ngắn thời gian sản xuất và đẩy nhanh tiêu thụ, vì chu
-                chuyển càng nhanh thì m càng nhiều.
+                Muốn nâng cao hiệu quả kinh doanh, doanh nghiệp phải rút ngắn
+                thời gian sản xuất và đẩy nhanh tiêu thụ, vì chu chuyển càng
+                nhanh thì m càng nhiều.
               </p>
             </Card>
           </Reveal>
@@ -761,27 +906,37 @@ export default function ContentLandingPage() {
         <div className="mx-auto grid max-w-6xl items-stretch gap-6 md:grid-cols-2">
           <Reveal direction="left" className="h-full">
             <Card className="border-[#d4a017]/35 bg-black/20">
-              <p className="font-kicker text-5xl text-[#f6df9b]">8 GIỜ LÀM VIỆC</p>
+              <p className="font-kicker text-5xl text-[#f6df9b]">
+                8 GIỜ LÀM VIỆC
+              </p>
               <ul className="mt-4 space-y-2 text-xl leading-relaxed text-[#f8e7c0]">
                 <li>4h tất yếu = 15 USD (trả lương)</li>
                 <li>4h thặng dư = 15 USD (thuộc nhà tư bản)</li>
-                <li className="font-label text-3xl text-[#d4a017]">m&apos; = 100%</li>
+                <li className="font-label text-3xl text-[#d4a017]">
+                  m&apos; = 100%
+                </li>
               </ul>
             </Card>
           </Reveal>
 
           <Reveal direction="right" delay={90} className="h-full">
             <Card className="border-[#f6df9b]/35 bg-black/20">
-              <h3 className="font-title text-3xl text-[#f8e7c0]">Bản chất giá trị thặng dư</h3>
+              <h3 className="font-title text-3xl text-[#f8e7c0]">
+                Bản chất giá trị thặng dư
+              </h3>
               <ol className="mt-4 space-y-3 text-lg leading-relaxed text-[#f2dfb5]">
                 <li>
-                  1) m là phần giá trị mới dôi ra ngoài giá trị sức lao động, do công nhân tạo ra, bị nhà tư bản chiếm lấy.
+                  1) m là phần giá trị mới dôi ra ngoài giá trị sức lao động, do
+                  công nhân tạo ra, bị nhà tư bản chiếm lấy.
                 </li>
                 <li>
-                  2) Không chỉ là con số kinh tế mà là quan hệ giai cấp: mua sức lao động đúng giá thị trường nhưng khai thác
-                  giá trị lớn hơn.
+                  2) Không chỉ là con số kinh tế mà là quan hệ giai cấp: mua sức
+                  lao động đúng giá thị trường nhưng khai thác giá trị lớn hơn.
                 </li>
-                <li>3) Bề mặt thị trường bình đẳng, bóc lột diễn ra bên trong xưởng sản xuất.</li>
+                <li>
+                  3) Bề mặt thị trường bình đẳng, bóc lột diễn ra bên trong
+                  xưởng sản xuất.
+                </li>
               </ol>
             </Card>
           </Reveal>
@@ -791,15 +946,21 @@ export default function ContentLandingPage() {
       <section className="gsap-section px-6 py-16">
         <div className="mx-auto max-w-6xl">
           <Reveal>
-            <h3 className="font-title text-4xl text-[#f8e7c0]">Làm thế nào để có nhiều m hơn?</h3>
+            <h3 className="font-title text-4xl text-[#f8e7c0]">
+              Làm thế nào để có nhiều m hơn?
+            </h3>
           </Reveal>
 
           <div className="mt-6 grid gap-5 lg:grid-cols-3">
             {METHODS.map((method, index) => (
               <Reveal key={method.title} delay={index * 70}>
                 <Card className="h-full border-[#d4a017]/30 transition hover:border-[#d4a017]/55 hover:shadow-[0_0_35px_rgba(212,160,23,0.18)]">
-                  <p className="font-kicker text-sm text-[#d4a017]">{method.tag}</p>
-                  <h4 className="mt-1 font-title text-3xl text-[#f8e7c0]">{method.title}</h4>
+                  <p className="font-kicker text-sm text-[#d4a017]">
+                    {method.tag}
+                  </p>
+                  <h4 className="mt-1 font-title text-3xl text-[#f8e7c0]">
+                    {method.title}
+                  </h4>
                   <ul className="mt-3 space-y-2 text-lg leading-relaxed text-[#eadcb4]">
                     {method.points.map((point) => (
                       <li key={point}>{point}</li>
@@ -815,7 +976,9 @@ export default function ContentLandingPage() {
       <section className="gsap-section gsap-conclusion px-6 pb-16">
         <div className="mx-auto max-w-6xl rounded-2xl border border-[#c0392b]/45 bg-[#c0392b]/12 p-6 sm:p-8">
           <Reveal>
-            <h3 className="gsap-conclusion-title font-title text-4xl text-[#f8e7c0]">Kết luận</h3>
+            <h3 className="gsap-conclusion-title font-title text-4xl text-[#f8e7c0]">
+              Kết luận
+            </h3>
           </Reveal>
 
           <ol className="mt-4 space-y-2 text-2xl leading-relaxed text-[#f2dfb5]">
