@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { LogOut } from 'lucide-react';
 
-import { useAuthStore } from "@/stores/authStore";
+import { useAuthStore } from '@/stores/authStore';
 
 export function Navbar() {
   const router = useRouter();
@@ -12,23 +12,32 @@ export function Navbar() {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/dang-nhap");
+    router.push('/dang-nhap');
   };
 
   return (
-    <header className="glass-card mx-auto mt-4 flex w-[min(1100px,calc(100%-2rem))] items-center justify-between px-4 py-3">
-      <Link href="/dashboard" className="text-xl font-extrabold tracking-wide">
-        QuizVui
+    <header className="sticky top-0 z-50 flex items-center justify-between border-b border-white/6 bg-mln-dark/80 px-6 py-3 backdrop-blur-xl">
+      <Link
+        href="/dashboard"
+        className="flex items-center gap-2.5 transition hover:opacity-80"
+      >
+        <span className="flex size-8 items-center justify-center rounded-lg bg-linear-to-br from-mln-red to-mln-red-dark text-sm font-bold text-white shadow-md shadow-mln-red/30">
+          ★
+        </span>
+        <span className="font-bold tracking-wide text-mln-cream">MLN122</span>
       </Link>
+
       <div className="flex items-center gap-3">
-        <p className="text-sm text-white/90">{user?.name || "Giáo viên"}</p>
+        {user?.name ? (
+          <p className="hidden text-sm text-mln-dim sm:block">{user.name}</p>
+        ) : null}
         <button
           type="button"
           onClick={handleLogout}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-sm font-semibold transition hover:bg-white/20"
+          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-3 py-2 text-sm font-medium text-mln-dim transition hover:bg-white/10 hover:text-mln-cream"
         >
           <LogOut className="size-4" />
-          Đăng xuất
+          <span className="hidden sm:inline">Đăng xuất</span>
         </button>
       </div>
     </header>

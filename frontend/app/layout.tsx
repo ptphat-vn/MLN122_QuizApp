@@ -1,18 +1,19 @@
-import type { Metadata } from "next";
-import { Be_Vietnam_Pro } from "next/font/google";
-import { Toaster } from "sonner";
+import type { Metadata } from 'next';
+import { Be_Vietnam_Pro } from 'next/font/google';
+import { Toaster } from 'sonner';
 
-import "./globals.css";
+import './globals.css';
 
 const beVietnamPro = Be_Vietnam_Pro({
-  variable: "--font-be-vietnam-pro",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  variable: '--font-be-vietnam-pro',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
 });
 
 export const metadata: Metadata = {
-  title: "QuizVui - Học vui cùng cả lớp",
-  description: "Nền tảng quiz realtime cho lớp học và đội nhóm.",
+  title: 'MLN122 — Kinh Tế Chính Trị Mác-Lênin',
+  description:
+    'Hệ thống ôn tập và kiểm tra Kinh Tế Chính Trị Mác-Lênin — Phiên Bản Số Hoá.',
 };
 
 export default function RootLayout({
@@ -22,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" className={`${beVietnamPro.variable} h-full antialiased`}>
-      <body className="min-h-full bg-[var(--quiz-bg)] text-white">
+      <body className="min-h-full bg-(--quiz-bg) text-white">
         {children}
         <Toaster richColors position="top-right" />
       </body>

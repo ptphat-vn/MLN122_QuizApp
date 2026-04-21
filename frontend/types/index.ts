@@ -1,14 +1,14 @@
 export type GameStatus =
-  | "idle"
-  | "waiting"
-  | "starting"
-  | "question"
-  | "answer_reveal"
-  | "leaderboard"
-  | "ended";
+  | 'idle'
+  | 'waiting'
+  | 'starting'
+  | 'question'
+  | 'answer_reveal'
+  | 'leaderboard'
+  | 'ended';
 
 export interface User {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   role: string;
@@ -24,7 +24,7 @@ export interface Option {
 export interface Question {
   _id: string;
   content: string;
-  type: "single" | "multiple" | "true_false";
+  type: 'single' | 'multiple' | 'true_false';
   options: Option[];
   timeLimit: number;
   points: number;
@@ -37,7 +37,7 @@ export interface Quiz {
   title: string;
   description: string;
   thumbnail?: string;
-  questions: Question[];
+  questions?: Question[];
   createdAt: string;
 }
 
@@ -54,6 +54,7 @@ export interface OptionStat {
   count: number;
   percentage: number;
   color: string;
+  isCorrect: boolean;
 }
 
 export interface Ranking {
@@ -75,4 +76,5 @@ export interface AnswerResult {
   isCorrect: boolean;
   pointsEarned: number;
   streak: number;
+  totalScore: number;
 }

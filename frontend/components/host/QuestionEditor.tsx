@@ -1,52 +1,164 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Option } from "@/types";
-import { OptionEditor } from "@/components/host/OptionEditor";
+import { Option, Question } from '@/types';
+import { OptionEditor } from '@/components/host/OptionEditor';
+
+const OPTION_SYMBOLS = ['▲', '◆', '●', '■'];
+const DEFAULT_OPTIONS: Option[] = [
+  { id: 'a', text: '', isCorrect: false, color: '#ef4444' },
+  { id: 'b', text: '', isCorrect: false, color: '#3b82f6' },
+  { id: 'c', text: '', isCorrect: false, color: '#f59e0b' },
+  { id: 'd', text: '', isCorrect: false, color: '#22c55e' },
+];
 
 interface QuestionEditorProps {
-  title?: string;
-  options: Option[];
+  question: Question | null;
+  isNew?: boolean;
+  saving: boolean;
+  onSave: (data: Omit<Question, '_id' | 'order'>) => Promise<void>;
+  onDelete: () => void;
 }
 
-export function QuestionEditor({ title = "Trình chỉnh sửa câu hỏi", options }: QuestionEditorProps) {
-  const [correctOptionIds, setCorrectOptionIds] = useState<string[]>([options[0]?.id ?? ""]);
+export function QuestionEditor({
+  question,
+  isNew = false,
+  saving,
+  onSave,
+  onDelete,
+}: QuestionEditorProps) {
+  const [content, setContent] = useState('');
+  const [timeLimit, setTimeLimit] = useState(20);
+  const [points, setPoints] = useState(1000);
+  const [options, setOptions] = useState<Option[]>(DEFAULT_OPTIONS);
+  const [correctIds, setCorrectIds] = useState<string[]>([]);
 
-  const typeLabel = useMemo(() => "Một đáp án", []);
+  useEffect(() => {
+    if (question) {
+      setContent(question.content);
+      setTimeLimit(question.timeLimit);
+      setPoints(question.points);
+      setOptions(question.options);
+      setCorrectIds(
+        question.options.filter((o) => o.isCorrect).map((o) => o.id),
+      );
+    } else {
+      setContent('');
+      setTimeLimit(20);
+      setPoints(1000);
+      setOptions(DEFAULT_OPTIONS);
+      setCorrectIds([]);
+    }
+  }, [question]);
+
+  const handleToggleCorrect = (optionId: string) => {
+    setCorrectIds([optionId]);
+  };
+
+  const handleOptionTextChange = (optionId: string, text: string) => {
+    setOptions((prev) =>
+      prev.map((o) => (o.id === optionId ? { ...o, text } : o)),
+    );
+  };
+
+  const handleSave = async () => {
+    await onSave({
+      content,
+      type: 'single',
+      timeLimit,
+      points,
+      options: options.map((o) => ({
+        ...o,
+        isCorrect: correctIds.includes(o.id),
+      })),
+    });
+  };
+
+  if (!question && !isNew) {
+    return (
+      <section className="glass-card flex min-h-50 items-center justify-center p-10 text-center text-mln-dim">
+        <p className="text-sm">Chọn hoặc thêm câu hỏi để bắt đầu biên soạn.</p>
+      </section>
+    );
+  }
 
   return (
-    <section className="glass-card p-5">
-      <h2 className="text-2xl font-extrabold">{title}</h2>
-      <p className="mt-1 text-white/80">Biên soạn câu hỏi, đáp án đúng và thời gian trả lời.</p>
+    <section className="glass-card p-6">
+      <h2 className="font-semibold text-mln-cream">Biên soạn câu hỏi</h2>
+      <p className="mt-0.5 text-sm text-mln-dim">
+        Nhập nội dung, các phương án và xác định đáp án đúng.
+      </p>
 
-      <div className="mt-5 grid gap-3">
-        <div className="flex flex-wrap gap-2 text-sm">
-          <span className="rounded-full bg-[var(--accent)] px-3 py-1 font-semibold">{typeLabel}</span>
-          <span className="rounded-full bg-white/15 px-3 py-1">20 giây</span>
-          <span className="rounded-full bg-white/15 px-3 py-1">1000 điểm</span>
+      <div className="mt-5 grid gap-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-mln-red/15 px-3 py-1 text-xs font-semibold text-mln-red">
+            Một đáp án
+          </span>
+          <select
+            value={timeLimit}
+            onChange={(e) => setTimeLimit(Number(e.target.value))}
+            className="rounded-xl border border-white/10 bg-white/6 px-3 py-1.5 text-sm text-mln-cream outline-none transition focus:border-mln-red/50"
+          >
+            {[5, 10, 20, 30, 60, 90, 120].map((t) => (
+              <option key={t} value={t} className="bg-mln-mid">
+                {t} giây
+              </option>
+            ))}
+          </select>
+          <select
+            value={points}
+            onChange={(e) => setPoints(Number(e.target.value))}
+            className="rounded-xl border border-white/10 bg-white/6 px-3 py-1.5 text-sm text-mln-cream outline-none transition focus:border-mln-red/50"
+          >
+            <option value={1000} className="bg-mln-mid">
+              1000 điểm
+            </option>
+            <option value={2000} className="bg-mln-mid">
+              2000 điểm
+            </option>
+          </select>
         </div>
 
         <textarea
           rows={4}
-          className="w-full rounded-lg border border-white/25 bg-white/10 p-3 outline-none"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="w-full resize-none rounded-xl border border-white/10 bg-white/6 p-4 text-mln-cream outline-none transition placeholder:text-mln-dim/50 focus:border-mln-red/50 focus:ring-2 focus:ring-mln-red/10"
           placeholder="Nhập nội dung câu hỏi..."
-          defaultValue="Ví dụ: Đâu là ngôn ngữ chạy trên trình duyệt?"
         />
 
         <div className="grid gap-3 sm:grid-cols-2">
-          {options.map((option, index) => {
-            const labels = ["▲", "◆", "●", "■"];
-            return (
-              <OptionEditor
-                key={option.id}
-                option={option}
-                label={labels[index] || "•"}
-                checked={correctOptionIds.includes(option.id)}
-                onToggle={() => setCorrectOptionIds([option.id])}
-              />
-            );
-          })}
+          {options.map((option, index) => (
+            <OptionEditor
+              key={option.id}
+              option={option}
+              label={OPTION_SYMBOLS[index] || '•'}
+              checked={correctIds.includes(option.id)}
+              onToggle={() => handleToggleCorrect(option.id)}
+              onTextChange={(text) => handleOptionTextChange(option.id, text)}
+            />
+          ))}
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving || !content.trim()}
+            className="rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-5 py-2.5 font-semibold text-white shadow-md shadow-mln-red/20 transition hover:brightness-110 disabled:opacity-60"
+          >
+            {saving ? 'Đang lưu...' : 'Lưu câu hỏi'}
+          </button>
+          {question && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-sm font-medium text-mln-dim transition hover:border-mln-red/40 hover:text-mln-red-light"
+            >
+              Xóa câu hỏi
+            </button>
+          )}
         </div>
       </div>
     </section>

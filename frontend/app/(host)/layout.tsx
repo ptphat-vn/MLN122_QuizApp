@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Navbar } from "@/components/shared/Navbar";
-import { useAuthStore } from "@/stores/authStore";
+import { Navbar } from '@/components/shared/Navbar';
+import { useAuthStore } from '@/stores/authStore';
 
 interface HostLayoutProps {
   children: React.ReactNode;
@@ -26,14 +26,26 @@ export default function HostLayout({ children }: HostLayoutProps) {
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.replace("/dang-nhap");
+      router.replace('/dang-nhap');
     }
   }, [isAuthenticated, loading, router]);
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center">
-        <p className="text-lg font-semibold">Đang kiểm tra phiên đăng nhập...</p>
+      <main className="flex min-h-screen flex-col items-center justify-center gap-5 bg-mln-dark">
+        <div className="relative">
+          <div
+            className="absolute inset-0 animate-ping rounded-full bg-mln-red/20"
+            style={{ animationDuration: '1.5s' }}
+          />
+          <span className="relative animate-star-pulse text-5xl text-mln-red">
+            ★
+          </span>
+        </div>
+        <div className="text-center">
+          <p className="text-sm font-medium text-mln-dim">MLN122</p>
+          <p className="text-xs text-mln-surface mt-1">Đang tải hệ thống...</p>
+        </div>
       </main>
     );
   }

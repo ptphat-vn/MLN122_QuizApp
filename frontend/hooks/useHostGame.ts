@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect, useRef } from 'react';
 
-import { useGameStore } from "@/stores/gameStore";
-import { useSocket } from "@/hooks/useSocket";
-import { GameStatus, OptionStat, Player, Question, Ranking } from "@/types";
+import { useGameStore } from '@/stores/gameStore';
+import { useSocket } from '@/hooks/useSocket';
+import { GameStatus, OptionStat, Player, Question, Ranking } from '@/types';
 
 interface UseHostGameResult {
   players: Player[];
@@ -22,7 +22,10 @@ interface UseHostGameResult {
 }
 
 export function useHostGame(sessionId: string): UseHostGameResult {
-  const token = typeof window !== "undefined" ? window.localStorage.getItem("accessToken") : null;
+  const token =
+    typeof window !== 'undefined'
+      ? window.localStorage.getItem('accessToken')
+      : null;
   const { socket } = useSocket(token || undefined);
   const {
     players,
@@ -38,40 +41,65 @@ export function useHostGame(sessionId: string): UseHostGameResult {
     setLeaderboard,
   } = useGameStore();
 
+  // Guard: only join room once per socket connection
+  const joinedRef = useRef(false);
+
+  // Join room effect — only runs when socket or sessionId changes
   useEffect(() => {
-    if (!socket || !sessionId) {
-      return;
+    if (!socket || !sessionId) return;
+    joinedRef.current = false;
+  }, [socket, sessionId]);
+
+  useEffect(() => {
+    if (!socket || !sessionId) return;
+    if (!joinedRef.current) {
+      joinedRef.current = true;
+      const authToken = window.localStorage.getItem('accessToken') || '';
+      socket.emit('host:join_room', { sessionId, token: authToken });
     }
 
-    socket.emit("host:join_room", { sessionId });
-
-    socket.on("room:player_joined", (nextPlayers: Player[]) => setPlayers(nextPlayers));
-    socket.on("room:player_left", (nextPlayers: Player[]) => setPlayers(nextPlayers));
-    socket.on("question:show", (question: Question) => {
-      setCurrentQuestion(question);
-      setGameStatus("question");
+    socket.on(
+      'room:player_joined',
+      ({ players: nextPlayers }: { players: Player[] }) =>
+        setPlayers(nextPlayers),
+    );
+    socket.on(
+      'room:player_left',
+      ({ players: nextPlayers }: { players: Player[] }) =>
+        setPlayers(nextPlayers),
+    );
+    socket.on('game:started', () => setGameStatus('starting'));
+    socket.on('question:show', (question: Question) => {
+      setCurrentQuestion(question); // also resets answerStats + totalAnswered in store
+      setGameStatus('question');
     });
-    socket.on("dashboard:update", (payload: { stats: OptionStat[]; totalAnswered: number }) => {
-      updateAnswerStats(payload.stats, payload.totalAnswered);
+    socket.on(
+      'dashboard:update',
+      (payload: { optionStats: OptionStat[]; totalAnswered: number }) => {
+        updateAnswerStats(payload.optionStats, payload.totalAnswered);
+      },
+    );
+    socket.on('answer:reveal', (payload: { stats: OptionStat[] }) => {
+      // Read current totalAnswered directly from store to avoid stale closure
+      const currentTotal = useGameStore.getState().totalAnswered;
+      updateAnswerStats(payload.stats, currentTotal);
+      setGameStatus('answer_reveal');
     });
-    socket.on("answer:reveal", (payload: { stats: OptionStat[] }) => {
-      updateAnswerStats(payload.stats, totalAnswered);
-      setGameStatus("answer_reveal");
+    socket.on('leaderboard:show', ({ rankings }: { rankings: Ranking[] }) => {
+      setLeaderboard(rankings);
+      setGameStatus('leaderboard');
     });
-    socket.on("leaderboard:show", (ranking: Ranking[]) => {
-      setLeaderboard(ranking);
-      setGameStatus("leaderboard");
-    });
-    socket.on("game:ended", () => setGameStatus("ended"));
+    socket.on('game:ended', () => setGameStatus('ended'));
 
     return () => {
-      socket.off("room:player_joined");
-      socket.off("room:player_left");
-      socket.off("question:show");
-      socket.off("dashboard:update");
-      socket.off("answer:reveal");
-      socket.off("leaderboard:show");
-      socket.off("game:ended");
+      socket.off('room:player_joined');
+      socket.off('room:player_left');
+      socket.off('game:started');
+      socket.off('question:show');
+      socket.off('dashboard:update');
+      socket.off('answer:reveal');
+      socket.off('leaderboard:show');
+      socket.off('game:ended');
     };
   }, [
     socket,
@@ -81,7 +109,6 @@ export function useHostGame(sessionId: string): UseHostGameResult {
     setGameStatus,
     updateAnswerStats,
     setLeaderboard,
-    totalAnswered,
   ]);
 
   return {
@@ -92,11 +119,10 @@ export function useHostGame(sessionId: string): UseHostGameResult {
     answerStats,
     leaderboard,
     totalAnswered,
-    startGame: () => socket?.emit("host:start_game", { sessionId }),
-    nextQuestion: () => socket?.emit("host:next_question", { sessionId }),
-    revealAnswer: () => socket?.emit("host:reveal_answer", { sessionId }),
-    showLeaderboard: () => socket?.emit("host:show_leaderboard", { sessionId }),
-    endGame: () => socket?.emit("host:end_game", { sessionId }),
+    startGame: () => socket?.emit('host:start_game', { sessionId }),
+    nextQuestion: () => socket?.emit('host:next_question', { sessionId }),
+    revealAnswer: () => socket?.emit('host:reveal_answer', { sessionId }),
+    showLeaderboard: () => socket?.emit('host:show_leaderboard', { sessionId }),
+    endGame: () => socket?.emit('host:end_game', { sessionId }),
   };
 }
-

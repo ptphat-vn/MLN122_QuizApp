@@ -38,7 +38,9 @@ export interface SessionState {
   answeredCount: number;
   questionStartTime: number;
   currentTimeLimit: number;
+  totalQuestions: number;
   timer?: ReturnType<typeof setInterval>;
+  autoTimer?: ReturnType<typeof setTimeout>;
 }
 
 // Payload từ socket client
@@ -82,6 +84,7 @@ export interface OptionStat {
   count: number;
   percentage: number;
   color: string;
+  isCorrect: boolean;
 }
 
 // Thứ hạng người chơi

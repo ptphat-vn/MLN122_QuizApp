@@ -4,9 +4,19 @@ interface QuestionDisplayProps {
 
 export function QuestionDisplay({ question }: QuestionDisplayProps) {
   return (
-    <section className="glass-card p-6 text-center">
-      <h1 className="text-3xl font-extrabold">{question}</h1>
-      <p className="mt-2 text-white/80">Đồng hồ đếm ngược và đáp án sẽ cập nhật realtime từ host.</p>
+    <section className="glass-card overflow-hidden">
+      <div className="h-1 w-full bg-linear-to-r from-mln-red to-mln-gold" />
+      <div className="p-6 text-center">
+        <span className="rounded-full bg-mln-red/15 px-3 py-1 text-xs font-semibold text-mln-red">
+          Câu hỏi
+        </span>
+        <h1 className="mt-4 text-2xl font-bold text-mln-cream md:text-3xl">
+          {question}
+        </h1>
+        <p className="mt-3 text-sm text-mln-dim">
+          Chọn phương án trong thời gian quy định.
+        </p>
+      </div>
     </section>
   );
 }

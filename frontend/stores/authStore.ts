@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { create } from "zustand";
+import { create } from 'zustand';
 
-import { api } from "@/lib/api";
-import { User } from "@/types";
+import { api } from '@/lib/api';
+import { User } from '@/types';
 
 interface AuthStore {
   user: User | null;
@@ -21,43 +21,49 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   accessToken: null,
   isAuthenticated: false,
   login: async (email, password) => {
-    const response = await api.post<{ accessToken: string; user: User }>("/auth/login", {
-      email,
-      password,
-    });
+    const response = await api.post<{ accessToken: string; user: User }>(
+      '/auth/login',
+      {
+        email,
+        password,
+      },
+    );
 
     const { accessToken, user } = response.data;
-    window.localStorage.setItem("accessToken", accessToken);
+    window.localStorage.setItem('accessToken', accessToken);
+    document.cookie = `accessToken=${accessToken}; path=/; max-age=3600`;
     set({ accessToken, user, isAuthenticated: true });
   },
   register: async (name, email, password) => {
-    await api.post("/auth/register", { name, email, password });
+    await api.post('/auth/register', { name, email, password });
     await get().login(email, password);
   },
   logout: async () => {
     try {
-      await api.post("/auth/logout");
+      await api.post('/auth/logout');
     } finally {
-      window.localStorage.removeItem("accessToken");
+      window.localStorage.removeItem('accessToken');
+      document.cookie = 'accessToken=; path=/; max-age=0';
       set({ user: null, accessToken: null, isAuthenticated: false });
     }
   },
   refreshToken: async () => {
-    const response = await api.post<{ accessToken: string; user?: User }>(
-      "/auth/refresh-token",
+    const response = await api.post<{ accessToken: string }>(
+      '/auth/refresh',
       {},
     );
 
-    const { accessToken, user } = response.data;
-    window.localStorage.setItem("accessToken", accessToken);
+    const { accessToken } = response.data;
+    window.localStorage.setItem('accessToken', accessToken);
+    document.cookie = `accessToken=${accessToken}; path=/; max-age=3600`;
     set((state) => ({
       accessToken,
-      user: user ?? state.user,
+      user: state.user,
       isAuthenticated: true,
     }));
   },
   hydrate: async () => {
-    const token = window.localStorage.getItem("accessToken");
+    const token = window.localStorage.getItem('accessToken');
     if (!token) {
       set({ user: null, accessToken: null, isAuthenticated: false });
       return;
@@ -66,10 +72,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     set({ accessToken: token, isAuthenticated: true });
 
     try {
-      const response = await api.get<User>("/auth/me");
+      const response = await api.get<User>('/auth/me');
       set({ user: response.data, isAuthenticated: true });
     } catch {
-      window.localStorage.removeItem("accessToken");
+      window.localStorage.removeItem('accessToken');
       set({ user: null, accessToken: null, isAuthenticated: false });
     }
   },

@@ -1,4 +1,4 @@
-type HostGameState = "question" | "answer_reveal" | "leaderboard";
+type HostGameState = 'question' | 'answer_reveal' | 'leaderboard';
 
 interface GameControllerProps {
   gameState: HostGameState;
@@ -7,36 +7,41 @@ interface GameControllerProps {
   onNext: () => void;
 }
 
-export function GameController({ gameState, onReveal, onShowLeaderboard, onNext }: GameControllerProps) {
+export function GameController({
+  gameState,
+  onReveal,
+  onShowLeaderboard,
+  onNext,
+}: GameControllerProps) {
   return (
-    <div className="flex flex-wrap gap-3">
-      {gameState === "question" ? (
+    <div className="flex flex-wrap gap-2">
+      {gameState === 'question' ? (
         <button
           type="button"
           onClick={onReveal}
-          className="rounded-lg bg-white/15 px-4 py-2 font-semibold hover:bg-white/25"
+          className="rounded-xl border border-white/10 bg-white/6 px-5 py-2.5 font-semibold text-mln-cream transition hover:bg-white/10"
         >
-          Xem Đáp Án
+          Xem đáp án →
         </button>
       ) : null}
 
-      {gameState === "answer_reveal" ? (
+      {gameState === 'answer_reveal' ? (
         <button
           type="button"
           onClick={onShowLeaderboard}
-          className="rounded-lg bg-[var(--accent)] px-4 py-2 font-semibold hover:brightness-110"
+          className="rounded-xl bg-linear-to-br from-mln-red to-mln-red-dark px-5 py-2.5 font-semibold text-white shadow-md shadow-mln-red/20 transition hover:brightness-110"
         >
-          Bảng Xếp Hạng
+          Bảng xếp hạng →
         </button>
       ) : null}
 
-      {gameState === "leaderboard" ? (
+      {gameState === 'leaderboard' ? (
         <button
           type="button"
           onClick={onNext}
-          className="rounded-lg bg-green-500 px-4 py-2 font-semibold hover:bg-green-400"
+          className="rounded-xl bg-linear-to-br from-green-600 to-green-700 px-5 py-2.5 font-semibold text-white shadow-md shadow-green-700/20 transition hover:brightness-110"
         >
-          Câu Tiếp Theo
+          Câu tiếp theo →
         </button>
       ) : null}
     </div>
