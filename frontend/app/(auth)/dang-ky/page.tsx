@@ -84,16 +84,24 @@ export default function RegisterPage() {
           {/* Card header */}
           <div className="border-b border-white/8 bg-linear-to-r from-mln-red/20 via-mln-red/8 to-transparent px-7 py-5">
             <div className="flex items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-xl bg-mln-red/20 text-xl text-mln-gold ring-1 ring-mln-red/30">★</span>
+              <span className="flex size-10 items-center justify-center rounded-xl bg-mln-red/20 text-xl text-mln-gold ring-1 ring-mln-red/30">
+                ★
+              </span>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-mln-dim">Kinh Tế Chính Trị Mác-Lênin</p>
-                <p className="mt-0.5 text-sm font-extrabold uppercase tracking-wide text-mln-cream">Tạo Tài Khoản · MLN122</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-mln-dim">
+                  Kinh Tế Chính Trị Mác-Lênin
+                </p>
+                <p className="mt-0.5 text-sm font-extrabold uppercase tracking-wide text-mln-cream">
+                  Tạo Tài Khoản · MLN122
+                </p>
               </div>
             </div>
           </div>
 
           <div className="px-7 py-7">
-            <h1 className="text-2xl font-extrabold uppercase tracking-tight text-mln-cream">Đăng ký</h1>
+            <h1 className="text-2xl font-extrabold uppercase tracking-tight text-mln-cream">
+              Đăng ký
+            </h1>
             <p className="mt-1 text-sm text-mln-dim">
               Quản lý bộ đề và mở phòng thi trực tiếp.
             </p>
@@ -163,7 +171,10 @@ export default function RegisterPage() {
                   />
                 </div>
                 <p className="mt-1 text-xs text-mln-dim">
-                  Độ mạnh: <span className="font-semibold text-mln-cream/70">{strengthLabel[Math.max(passwordStrength - 1, 0)]}</span>
+                  Độ mạnh:{' '}
+                  <span className="font-semibold text-mln-cream/70">
+                    {strengthLabel[Math.max(passwordStrength - 1, 0)]}
+                  </span>
                 </p>
                 {errors.password ? (
                   <p className="mt-1.5 text-xs text-mln-red-light">
@@ -218,11 +229,11 @@ export default function RegisterPage() {
 
         <blockquote className="mt-4 rounded-xl border border-mln-gold/20 bg-mln-gold/5 px-5 py-3.5 text-xs italic text-mln-dim">
           &ldquo;Lao động là nguồn gốc của mọi của cải.&rdquo;{' '}
-          <cite className="not-italic font-bold text-mln-gold/80">— K. Marx</cite>
+          <cite className="not-italic font-bold text-mln-gold/80">
+            — K. Marx
+          </cite>
         </blockquote>
       </div>
-    </main>
-  );
     </main>
   );
 }
